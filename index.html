@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#111827" />
+<title>Control Camión</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Control Camión">
+<link rel="apple-touch-icon" href="icon.png">
+<style>
+:root{
+  --bg:#f3f4f6;--card:#ffffff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;
+  --accent:#2563eb;--accent2:#1d4ed8;--good:#15803d;--bad:#b91c1c;--warn:#b45309;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{position:sticky;top:0;z-index:20;background:#111827;color:#fff;padding:14px 16px;box-shadow:0 2px 12px #0002}
+header h1{font-size:20px;margin:0}
+header small{color:#d1d5db}
+main{max-width:980px;margin:0 auto;padding:14px 14px 90px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(min-width:760px){.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 3px 10px #0000000a;margin-bottom:12px}
+.card h2,.card h3{margin:0 0 10px}
+.kpi{padding:12px;border-radius:14px;background:#f9fafb;border:1px solid var(--line)}
+.kpi b{display:block;font-size:20px;margin-top:4px}
+label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:12px;background:#fff;font-size:16px}
+textarea{min-height:72px;resize:vertical}
+button,.btn{border:0;border-radius:12px;padding:12px 14px;font-weight:700;font-size:15px;cursor:pointer}
+.primary{background:var(--accent);color:#fff}.primary:hover{background:var(--accent2)}
+.secondary{background:#e5e7eb;color:#111827}
+.danger{background:#fee2e2;color:#991b1b}
+.good{background:#dcfce7;color:#166534}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);z-index:30;padding-bottom:env(safe-area-inset-bottom)}
+.tabs button{background:#fff;color:#374151;border-radius:0;padding:10px 4px;font-size:12px}
+.tabs button.active{color:var(--accent);background:#eff6ff}
+.page{display:none}.page.active{display:block}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:#4b5563}
+.table-wrap{overflow:auto}
+.pill{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;background:#eef2ff;color:#3730a3}
+.row-actions{display:flex;gap:6px}
+.row-actions button{padding:6px 8px;font-size:12px}
+.note{font-size:12px;color:var(--muted)}
+.empty{padding:16px;text-align:center;color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:14px 0}
+</style>
+</head>
+<body>
+<header>
+  <h1>🚛 Control Camión</h1>
+  <small>Trabajos, combustible y gastos diarios</small>
+</header>
+
+<main>
+<section id="inicio" class="page active">
+  <div class="card">
+    <h2>Resumen del mes</h2>
+    <div class="grid grid-4">
+      <div class="kpi"><span>Facturación</span><b id="kFact">0,00 €</b></div>
+      <div class="kpi"><span>Combustible</span><b id="kFuel">0,00 €</b></div>
+      <div class="kpi"><span>Otros gastos</span><b id="kOther">0,00 €</b></div>
+      <div class="kpi"><span>Resultado</span><b id="kProfit">0,00 €</b></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Actividad</h3>
+    <div class="grid grid-4">
+      <div class="kpi"><span>Kilómetros</span><b id="kKm">0</b></div>
+      <div class="kpi"><span>Litros</span><b id="kLiters">0</b></div>
+      <div class="kpi"><span>Consumo medio</span><b id="kCons">0,0 L/100</b></div>
+      <div class="kpi"><span>Nº trabajos</span><b id="kJobs">0</b></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Últimos movimientos</h3>
+    <div id="recent" class="empty">Todavía no hay datos.</div>
+  </div>
+</section>
+
+<section id="trabajos" class="page">
+  <div class="card">
+    <h2>➕ Nuevo trabajo</h2>
+    <div class="grid">
+      <div><label>Fecha</label><input type="date" id="jobDate"></div>
+      <div><label>Cliente</label><input id="jobClient" placeholder="Nombre del cliente"></div>
+      <div><label>Lugar de carga</label><input id="jobLoad" list="places" placeholder="Ej. Valencia"></div>
+      <div><label>Lugar de descarga</label><input id="jobUnload" list="places" placeholder="Ej. Madrid"></div>
+      <div><label>Km inicial</label><input type="number" id="jobKmStart" inputmode="decimal"></div>
+      <div><label>Km final</label><input type="number" id="jobKmEnd" inputmode="decimal"></div>
+      <div><label>Importe trabajo (€)</label><input type="number" step="0.01" id="jobAmount" inputmode="decimal"></div>
+      <div><label>Estado</label><select id="jobStatus"><option>Cobrado</option><option>Pendiente</option></select></div>
+    </div>
+    <label>Observaciones</label><textarea id="jobNotes" placeholder="Mercancía, referencia, incidencias..."></textarea>
+    <div class="toolbar"><button class="primary" onclick="addJob()">Guardar trabajo</button></div>
+  </div>
+  <div class="card">
+    <h3>Trabajos guardados</h3>
+    <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Ruta</th><th>Km</th><th>Importe</th><th>Estado</th><th></th></tr></thead><tbody id="jobsBody"></tbody></table></div>
+  </div>
+</section>
+
+<section id="repostajes" class="page">
+  <div class="card">
+    <h2>⛽ Nuevo repostaje</h2>
+    <div class="grid">
+      <div><label>Fecha</label><input type="date" id="fuelDate"></div>
+      <div><label>Gasolinera / lugar</label><input id="fuelPlace" list="fuelPlaces" placeholder="Ej. Repsol Albacete"></div>
+      <div><label>Km del camión</label><input type="number" id="fuelKm" inputmode="decimal"></div>
+      <div><label>Litros</label><input type="number" step="0.01" id="fuelLiters" inputmode="decimal"></div>
+      <div><label>Precio por litro (€)</label><input type="number" step="0.001" id="fuelPrice" inputmode="decimal"></div>
+      <div><label>Importe total (€)</label><input type="number" step="0.01" id="fuelTotal" inputmode="decimal" placeholder="Se calcula solo"></div>
+    </div>
+    <div class="toolbar"><button class="primary" onclick="addFuel()">Guardar repostaje</button></div>
+  </div>
+  <div class="card">
+    <h3>Repostajes</h3>
+    <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Lugar</th><th>Km</th><th>Litros</th><th>€/L</th><th>Total</th><th></th></tr></thead><tbody id="fuelBody"></tbody></table></div>
+  </div>
+</section>
+
+<section id="gastos" class="page">
+  <div class="card">
+    <h2>💳 Nuevo gasto</h2>
+    <div class="grid">
+      <div><label>Fecha</label><input type="date" id="expDate"></div>
+      <div><label>Tipo</label>
+        <select id="expType">
+          <option>Peaje</option><option>Parking</option><option>AdBlue</option><option>Lavado</option>
+          <option>Reparación</option><option>Neumáticos</option><option>Dietas</option><option>ITV</option>
+          <option>Seguro</option><option>Otro</option>
+        </select>
+      </div>
+      <div><label>Lugar</label><input id="expPlace" placeholder="Lugar o proveedor"></div>
+      <div><label>Importe (€)</label><input type="number" step="0.01" id="expAmount" inputmode="decimal"></div>
+    </div>
+    <label>Observaciones</label><textarea id="expNotes"></textarea>
+    <div class="toolbar"><button class="primary" onclick="addExpense()">Guardar gasto</button></div>
+  </div>
+  <div class="card">
+    <h3>Gastos</h3>
+    <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Lugar</th><th>Importe</th><th></th></tr></thead><tbody id="expBody"></tbody></table></div>
+  </div>
+</section>
+
+<section id="datos" class="page">
+  <div class="card">
+    <h2>📁 Copia de seguridad</h2>
+    <p class="note">Los datos se guardan en este dispositivo. Exporta una copia periódicamente.</p>
+    <div class="toolbar">
+      <button class="primary" onclick="exportJSON()">Exportar copia</button>
+      <label class="btn secondary" style="display:inline-block">Importar copia<input type="file" id="importFile" accept=".json" hidden onchange="importJSON(event)"></label>
+      <button class="secondary" onclick="exportCSV()">Exportar CSV</button>
+    </div>
+    <hr>
+    <button class="danger" onclick="clearAll()">Borrar todos los datos</button>
+  </div>
+  <div class="card">
+    <h3>Lugares guardados</h3>
+    <p class="note">Se guardan automáticamente cuando introduces cargas, descargas o gasolineras.</p>
+    <div id="savedPlaces"></div>
+  </div>
+</section>
+
+<datalist id="places"></datalist>
+<datalist id="fuelPlaces"></datalist>
+</main>
+
+<nav class="tabs">
+  <button class="active" onclick="showPage('inicio',this)">🏠<br>Inicio</button>
+  <button onclick="showPage('trabajos',this)">🚚<br>Trabajos</button>
+  <button onclick="showPage('repostajes',this)">⛽<br>Repostajes</button>
+  <button onclick="showPage('gastos',this)">💳<br>Gastos</button>
+  <button onclick="showPage('datos',this)">📁<br>Datos</button>
+</nav>
+
+<script>
+const KEY='controlCamion_v1';
+let db = JSON.parse(localStorage.getItem(KEY) || '{"jobs":[],"fuel":[],"expenses":[],"places":[],"fuelPlaces":[]}');
+
+function save(){localStorage.setItem(KEY,JSON.stringify(db)); render();}
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function today(){return new Date().toISOString().slice(0,10)}
+['jobDate','fuelDate','expDate'].forEach(x=>document.getElementById(x).value=today());
+
+function num(id){return parseFloat(document.getElementById(id).value)||0}
+function txt(id){return document.getElementById(id).value.trim()}
+function money(v){return (Number(v)||0).toLocaleString('es-ES',{style:'currency',currency:'EUR'})}
+function n(v,d=0){return (Number(v)||0).toLocaleString('es-ES',{maximumFractionDigits:d,minimumFractionDigits:d})}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+function showPage(name,btn){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(name).classList.add('active');
+ document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.getElementById('fuelLiters').addEventListener('input',calcFuel);
+document.getElementById('fuelPrice').addEventListener('input',calcFuel);
+function calcFuel(){const t=num('fuelLiters')*num('fuelPrice'); if(t)document.getElementById('fuelTotal').value=t.toFixed(2)}
+
+function addJob(){
+ const start=num('jobKmStart'), end=num('jobKmEnd');
+ if(!txt('jobLoad')||!txt('jobUnload')) return alert('Introduce lugar de carga y descarga.');
+ if(end && start && end<start) return alert('El km final no puede ser menor que el inicial.');
+ db.jobs.unshift({id:id(),date:txt('jobDate')||today(),client:txt('jobClient'),load:txt('jobLoad'),unload:txt('jobUnload'),kmStart:start,kmEnd:end,amount:num('jobAmount'),status:txt('jobStatus'),notes:txt('jobNotes')});
+ [txt('jobLoad'),txt('jobUnload')].forEach(p=>{if(p&&!db.places.includes(p))db.places.push(p)});
+ ['jobClient','jobLoad','jobUnload','jobKmStart','jobKmEnd','jobAmount','jobNotes'].forEach(x=>document.getElementById(x).value='');
+ save();
+}
+function addFuel(){
+ const liters=num('fuelLiters'), price=num('fuelPrice'), total=num('fuelTotal') || liters*price;
+ if(!liters) return alert('Introduce los litros repostados.');
+ const place=txt('fuelPlace');
+ db.fuel.unshift({id:id(),date:txt('fuelDate')||today(),place,km:num('fuelKm'),liters,price,total});
+ if(place&&!db.fuelPlaces.includes(place))db.fuelPlaces.push(place);
+ ['fuelPlace','fuelKm','fuelLiters','fuelPrice','fuelTotal'].forEach(x=>document.getElementById(x).value='');
+ save();
+}
+function addExpense(){
+ if(!num('expAmount')) return alert('Introduce el importe del gasto.');
+ db.expenses.unshift({id:id(),date:txt('expDate')||today(),type:txt('expType'),place:txt('expPlace'),amount:num('expAmount'),notes:txt('expNotes')});
+ ['expPlace','expAmount','expNotes'].forEach(x=>document.getElementById(x).value='');
+ save();
+}
+function del(kind,rid){
+ if(!confirm('¿Eliminar este registro?'))return;
+ db[kind]=db[kind].filter(x=>x.id!==rid);save();
+}
+function render(){
+ const ym=today().slice(0,7);
+ const jobsM=db.jobs.filter(x=>x.date?.startsWith(ym));
+ const fuelM=db.fuel.filter(x=>x.date?.startsWith(ym));
+ const expM=db.expenses.filter(x=>x.date?.startsWith(ym));
+ const fact=jobsM.reduce((a,x)=>a+(+x.amount||0),0);
+ const fuelCost=fuelM.reduce((a,x)=>a+(+x.total||0),0);
+ const other=expM.reduce((a,x)=>a+(+x.amount||0),0);
+ const km=jobsM.reduce((a,x)=>a+Math.max(0,(+x.kmEnd||0)-(+x.kmStart||0)),0);
+ const liters=fuelM.reduce((a,x)=>a+(+x.liters||0),0);
+ const cons=km?liters/km*100:0;
+ kFact.textContent=money(fact);kFuel.textContent=money(fuelCost);kOther.textContent=money(other);kProfit.textContent=money(fact-fuelCost-other);
+ kKm.textContent=n(km);kLiters.textContent=n(liters,1);kCons.textContent=n(cons,1)+' L/100';kJobs.textContent=jobsM.length;
+
+ jobsBody.innerHTML=db.jobs.map(x=>`<tr><td>${esc(x.date)}</td><td><b>${esc(x.load)}</b> → ${esc(x.unload)}<br><span class="note">${esc(x.client)}</span></td><td>${n((+x.kmEnd||0)-(+x.kmStart||0))}</td><td>${money(x.amount)}</td><td><span class="pill">${esc(x.status)}</span></td><td><button class="danger" onclick="del('jobs','${x.id}')">✕</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">Sin trabajos</td></tr>';
+ fuelBody.innerHTML=db.fuel.map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.place)}</td><td>${n(x.km)}</td><td>${n(x.liters,1)}</td><td>${money(x.price).replace('€','')}</td><td>${money(x.total)}</td><td><button class="danger" onclick="del('fuel','${x.id}')">✕</button></td></tr>`).join('')||'<tr><td colspan="7" class="empty">Sin repostajes</td></tr>';
+ expBody.innerHTML=db.expenses.map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.type)}</td><td>${esc(x.place)}</td><td>${money(x.amount)}</td><td><button class="danger" onclick="del('expenses','${x.id}')">✕</button></td></tr>`).join('')||'<tr><td colspan="5" class="empty">Sin gastos</td></tr>';
+
+ places.innerHTML=db.places.map(p=>`<option value="${esc(p)}">`).join('');
+ fuelPlaces.innerHTML=db.fuelPlaces.map(p=>`<option value="${esc(p)}">`).join('');
+ savedPlaces.innerHTML='<b>Cargas y descargas:</b> '+(db.places.map(esc).join(' · ')||'—')+'<br><br><b>Gasolineras:</b> '+(db.fuelPlaces.map(esc).join(' · ')||'—');
+
+ const items=[
+   ...db.jobs.map(x=>({date:x.date,text:`🚚 ${x.load} → ${x.unload} · ${money(x.amount)}`})),
+   ...db.fuel.map(x=>({date:x.date,text:`⛽ ${x.place||'Repostaje'} · ${n(x.liters,1)} L · ${money(x.total)}`})),
+   ...db.expenses.map(x=>({date:x.date,text:`💳 ${x.type} · ${x.place||''} · ${money(x.amount)}`}))
+ ].sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,8);
+ recent.innerHTML=items.length?items.map(x=>`<div style="padding:9px 0;border-bottom:1px solid var(--line)"><b>${esc(x.date)}</b><br>${x.text}</div>`).join(''):'Todavía no hay datos.';
+}
+function download(name,content,type){
+ const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);
+}
+function exportJSON(){download('control-camion-copia-'+today()+'.json',JSON.stringify(db,null,2),'application/json')}
+function importJSON(e){
+ const f=e.target.files[0]; if(!f)return;
+ const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.jobs||!x.fuel||!x.expenses)throw 0;db=x;save();alert('Copia importada correctamente.')}catch{alert('El archivo no es una copia válida.')}};r.readAsText(f);
+}
+function csvCell(v){return '"'+String(v??'').replaceAll('"','""')+'"'}
+function exportCSV(){
+ let rows=[['TIPO','FECHA','DETALLE 1','DETALLE 2','KM/LITROS','IMPORTE']];
+ db.jobs.forEach(x=>rows.push(['Trabajo',x.date,x.load,x.unload,(+x.kmEnd||0)-(+x.kmStart||0),x.amount]));
+ db.fuel.forEach(x=>rows.push(['Repostaje',x.date,x.place,'Litros',x.liters,x.total]));
+ db.expenses.forEach(x=>rows.push(['Gasto',x.date,x.type,x.place,'',x.amount]));
+ download('control-camion-'+today()+'.csv','\uFEFF'+rows.map(r=>r.map(csvCell).join(';')).join('\n'),'text/csv;charset=utf-8');
+}
+function clearAll(){if(confirm('Esto borrará todos los datos guardados en este dispositivo. ¿Continuar?')){db={jobs:[],fuel:[],expenses:[],places:[],fuelPlaces:[]};save()}}
+render();
+</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(()=>{});}</script>
+</body>
+</html>
