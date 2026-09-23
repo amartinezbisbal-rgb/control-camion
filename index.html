@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#111827" />
+<title>Control Camión</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Control Camión">
+<link rel="apple-touch-icon" href="icon.png">
+<style>
+:root{
+  --bg:#f3f4f6;--card:#ffffff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;
+  --accent:#2563eb;--accent2:#1d4ed8;--good:#15803d;--bad:#b91c1c;--warn:#b45309;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{position:sticky;top:0;z-index:20;background:#111827;color:#fff;padding:14px 16px;box-shadow:0 2px 12px #0002}
+header h1{font-size:20px;margin:0}
+header small{color:#d1d5db}
+main{max-width:980px;margin:0 auto;padding:14px 14px 90px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(min-width:760px){.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 3px 10px #0000000a;margin-bottom:12px}
+.card h2,.card h3{margin:0 0 10px}
+.kpi{padding:12px;border-radius:14px;background:#f9fafb;border:1px solid var(--line)}
+.kpi b{display:block;font-size:20px;margin-top:4px}
+label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:12px;background:#fff;font-size:16px}
+textarea{min-height:72px;resize:vertical}
+button,.btn{border:0;border-radius:12px;padding:12px 14px;font-weight:700;font-size:15px;cursor:pointer}
+.primary{background:var(--accent);color:#fff}.primary:hover{background:var(--accent2)}
+.secondary{background:#e5e7eb;color:#111827}
+.danger{background:#fee2e2;color:#991b1b}
+.good{background:#dcfce7;color:#166534}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr);z-index:30;padding-bottom:env(safe-area-inset-bottom)}
+.tabs button{background:#fff;color:#374151;border-radius:0;padding:10px 4px;font-size:12px}
+.tabs button.active{color:var(--accent);background:#eff6ff}
+.page{display:none}.page.active{display:block}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:#4b5563}
+.table-wrap{overflow:auto}
+.pill{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;background:#eef2ff;color:#3730a3}
+.row-actions{display:flex;gap:6px}
+.row-actions button{padding:6px 8px;font-size:12px}
+.note{font-size:12px;color:var(--muted)}
+.empty{padding:16px;text-align:center;color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:14px 0}
+</style>
+</head>
+<body>
+<header>
+  <h1>🚛 Control Camión</h1>
+  <small>Trabajos, combustible y gastos diarios</small>
+</header>
+
+<main>
+<section id="inicio" class="page active">
+  <div class="card">
+    <h2>Resumen del mes</h2>
+    <div class="grid grid-4">
+      <div class="kpi"><span>Factura mensual (base)</span><b id="kFact">0,00 €</b></div>
+      <div class="kpi"><span>Combustible</span><b id="kFuel">0,00 €</b></div>
+      <div class="kpi"><span>Otros gastos</span><b id="kOther">0,00 €</b></div>
+      <div class="kpi"><span>Resultado estimado</span><b id="kProfit">0,00 €</b></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Actividad</h3>
+    <div class="grid grid-4">
+      <div class="kpi"><span>Km con carga</span><b id="kKm">0</b></div>
+      <div class="kpi"><span>Km en vacío</span><b id="kEmptyKm">0</b></div>
+      <div class="kpi"><span>Km totales camión</span><b id="kTotalKm">0</b></div>
+      <div class="kpi"><span>Litros</span><b id="kLiters">0</b></div>
+      <div class="kpi"><span>Consumo medio</span><b id="kCons">0,0 L/100</b></div>
+      <div class="kpi"><span>Precio por km</span><b id="kPriceKm">—</b></div><div class="kpi"><span>Nº trabajos</span><b id="kJobs">0</b></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Últimos movimientos</h3>
+    <div id="recent" class="empty">Todavía no hay datos.</div>
+  </div>
+</section>
+
+<section id="trabajos" class="page">
+<div class="card"><h2>🚛 Iniciar viaje</h2><p class="note">Registra la carga ahora. Completarás la descarga más tarde.</p><div class="grid">
+<div><label>Fecha de carga</label><input type="date" id="jobDate"></div><div><label>Cliente</label><input id="jobClient" placeholder="Cliente"></div>
+<div><label>Lugar de carga</label><input id="jobLoad" list="places" placeholder="Origen"></div><div><label>Destino previsto (opcional)</label><input id="jobUnload" list="places" placeholder="Destino"></div>
+<div><label>Km en carga</label><input id="jobKmStart" type="number" min="0" step="1" inputmode="numeric"></div><div><label>Kilos en carga</label><input id="jobWeightStart" type="number" min="0" step="0.01" inputmode="decimal"></div>
+</div><label>Observaciones</label><textarea id="jobNotes" placeholder="Mercancía, referencia..."></textarea><button class="primary" onclick="addJob()">Iniciar viaje</button></div>
+<div class="card"><h2>🏁 Finalizar viaje</h2><label>Selecciona un viaje en curso</label><select id="finishJob" onchange="showFinishJob()"></select><p id="finishInfo" class="note"></p><div class="grid">
+<div><label>Fecha de descarga</label><input id="finishDate" type="date"></div><div><label>Lugar de descarga</label><input id="finishUnload" list="places"></div>
+<div><label>Km en descarga</label><input id="finishKm" type="number" min="0" step="1" inputmode="numeric"></div><div><label>Kilos en descarga</label><input id="finishWeight" type="number" min="0" step="0.01" inputmode="decimal"></div>
+</div><button class="primary" onclick="finishTrip()">Finalizar viaje</button></div>
+<div class="card"><h3>Historial de viajes</h3><div class="table-wrap"><table><thead><tr><th>Carga</th><th>Ruta</th><th>Estado</th><th>Km carga</th><th>Km vacío anterior</th><th>Kg carga / descarga</th><th></th></tr></thead><tbody id="jobsBody"></tbody></table></div></div>
+</section>
+<section id="repostajes" class="page">
+  <div class="card">
+    <h2>⛽ Nuevo repostaje</h2>
+    <div class="grid">
+      <div><label>Fecha</label><input type="date" id="fuelDate"></div>
+      <div><label>Gasolinera / lugar</label><input id="fuelPlace" list="fuelPlaces" placeholder="Ej. Repsol Albacete"></div>
+      <div><label>Km del camión</label><input type="number" id="fuelKm" inputmode="decimal"></div>
+      <div><label>Litros</label><input type="number" step="0.01" id="fuelLiters" inputmode="decimal"></div>
+      <div><label>Precio por litro (€)</label><input type="number" step="0.001" id="fuelPrice" inputmode="decimal"></div>
+      <div><label>Importe total (€)</label><input type="number" step="0.01" id="fuelTotal" inputmode="decimal" placeholder="Se calcula solo"></div>
+    </div>
+    <div class="toolbar"><button class="primary" onclick="addFuel()">Guardar repostaje</button></div>
+  </div>
+  <div class="card">
+    <h3>Repostajes</h3>
+    <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Lugar</th><th>Km</th><th>Litros</th><th>€/L</th><th>Total</th><th></th></tr></thead><tbody id="fuelBody"></tbody></table></div>
+  </div>
+</section>
+
+<section id="gastos" class="page">
+  <div class="card">
+    <h2>💳 Nuevo gasto</h2>
+    <div class="grid">
+      <div><label>Fecha</label><input type="date" id="expDate"></div>
+      <div><label>Tipo</label>
+        <select id="expType">
+          <option>Peaje</option><option>Parking</option><option>AdBlue</option><option>Lavado</option>
+          <option>Reparación</option><option>Neumáticos</option><option>Dietas</option><option>ITV</option>
+          <option>Seguro</option><option>Otro</option>
+        </select>
+      </div>
+      <div><label>Lugar</label><input id="expPlace" placeholder="Lugar o proveedor"></div>
+      <div><label>Importe (€)</label><input type="number" step="0.01" id="expAmount" inputmode="decimal"></div>
+    </div>
+    <label>Observaciones</label><textarea id="expNotes"></textarea>
+    <div class="toolbar"><button class="primary" onclick="addExpense()">Guardar gasto</button></div>
+  </div>
+  <div class="card">
+    <h3>Gastos</h3>
+    <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Lugar</th><th>Importe</th><th></th></tr></thead><tbody id="expBody"></tbody></table></div>
+  </div>
+</section>
+
+<section id="datos" class="page">
+  <div class="card">
+    <h2>📁 Copia de seguridad</h2>
+    <p class="note">Los datos se guardan en este dispositivo. Exporta una copia periódicamente.</p>
+    <div class="toolbar">
+      <button class="primary" onclick="exportJSON()">Exportar copia</button>
+      <label class="btn secondary" style="display:inline-block">Importar copia<input type="file" id="importFile" accept=".json" hidden onchange="importJSON(event)"></label>
+      <button class="secondary" onclick="exportCSV()">Exportar CSV</button>
+    </div>
+    <hr>
+    <button class="danger" onclick="clearAll()">Borrar todos los datos</button>
+  </div>
+  <div class="card">
+    <h3>Lugares guardados</h3>
+    <p class="note">Se guardan automáticamente cuando introduces cargas, descargas o gasolineras.</p>
+    <div id="savedPlaces"></div>
+  </div>
+</section>
+
+<section id="archivo" class="page"><div class="card"><h2>🧾 Factura única del mes</h2><p class="note">Registra la base sin IVA para calcular el precio por km. Adjunta aquí tu factura existente (PDF o foto). Los cobros se registran por separado.</p><div class="grid"><div><label>Mes de los trabajos</label><input id="invoiceMonth" type="month"></div><div><label>Número de factura</label><input id="invoiceNumber" placeholder="Ej. F-09/2026"></div><div><label>Fecha de factura</label><input id="invoiceDate" type="date"></div><div><label>Base imponible (€), sin IVA</label><input id="invoiceBase" type="number" min="0" step="0.01" inputmode="decimal"></div><div><label>IVA (€), si corresponde</label><input id="invoiceVat" type="number" min="0" step="0.01" inputmode="decimal"></div><div><label>Total factura (€)</label><input id="invoiceTotal" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Se calcula si se deja vacío"></div><div><label>Fecha de cobro (opcional)</label><input id="invoicePaidDate" type="date"></div><div><label>Importe cobrado (€)</label><input id="invoicePaid" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0 si está pendiente"></div></div><label>Adjuntar factura existente (PDF o foto)</label><input id="invoiceFile" type="file" accept="application/pdf,image/*"><div class="toolbar"><button class="primary" onclick="saveInvoice()">Guardar factura mensual</button></div><p id="invoiceInfo" class="note"></p><div id="invoiceHistory"></div></div><div class="card"><h2>📎 Fotografías y documentos</h2><p class="note">Selecciona un trabajo, repostaje o gasto ya guardado. Puedes adjuntar fotos, albaranes, facturas existentes y PDF.</p><label>Registro</label><select id="docRecord"></select><label>Clase de documento</label><select id="docType"><option>Foto del trabajo</option><option>Albarán</option><option>Factura</option><option>Ticket</option><option>Otro</option></select><label>Fotos o archivos (puedes seleccionar varios)</label><input type="file" id="docFiles" accept="image/*,application/pdf" multiple><div class="toolbar"><button class="primary" onclick="addDocuments()">Adjuntar documentos</button></div><p class="note" id="docStatus"></p><h3>Documentos guardados</h3><div id="docList"></div></div><div class="card" style="display:none"><h2>💶 Cobros y pagos</h2><label>Trabajo relacionado</label><select id="paymentJob"></select><div class="grid"><div><label>Fecha de cobro</label><input type="date" id="paymentDate"></div><div><label>Importe cobrado (€)</label><input type="number" step="0.01" id="paymentAmount"></div></div><label>Referencia / observaciones</label><input id="paymentNote"><div class="toolbar"><button class="primary" onclick="addPayment()">Guardar cobro</button></div><div id="paymentList"></div></div><div class="card"><h2>🖨️ Cierre mensual</h2><label>Mes a imprimir</label><input type="month" id="reportMonth"><p class="note">Genera un documento con resumen, trabajos, cobros, gastos, repostajes y anexos fotográficos. En iPhone/Android utiliza Compartir o Imprimir → Guardar como PDF. Los PDF adjuntos se enumeran, pero no se incrustan como páginas; descárgalos por separado.</p><button class="primary" onclick="printMonthly()">Preparar informe e imprimir / guardar PDF</button></div></section>
+<datalist id="places"></datalist>
+<datalist id="fuelPlaces"></datalist>
+</main>
+
+<nav class="tabs">
+  <button class="active" onclick="showPage('inicio',this)">🏠<br>Inicio</button>
+  <button onclick="showPage('trabajos',this)">🚚<br>Trabajos</button>
+  <button onclick="showPage('repostajes',this)">⛽<br>Repostajes</button>
+  <button onclick="showPage('gastos',this)">💳<br>Gastos</button>
+  <button onclick="showPage('archivo',this)">📎<br>Archivo</button><button onclick="showPage('datos',this)">📁<br>Datos</button>
+</nav>
+
+<script>
+const KEY='controlCamion_v1';
+let db = JSON.parse(localStorage.getItem(KEY) || '{"jobs":[],"fuel":[],"expenses":[],"places":[],"fuelPlaces":[]}');
+
+function save(){localStorage.setItem(KEY,JSON.stringify(db)); render();}
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function today(){return new Date().toISOString().slice(0,10)}
+['jobDate','fuelDate','expDate'].forEach(x=>document.getElementById(x).value=today());
+
+function num(id){return parseFloat(document.getElementById(id).value)||0}
+function txt(id){return document.getElementById(id).value.trim()}
+function money(v){return (Number(v)||0).toLocaleString('es-ES',{style:'currency',currency:'EUR'})}
+function n(v,d=0){return (Number(v)||0).toLocaleString('es-ES',{maximumFractionDigits:d,minimumFractionDigits:d})}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+function showPage(name,btn){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(name).classList.add('active');
+ document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.getElementById('fuelLiters').addEventListener('input',calcFuel);
+document.getElementById('fuelPrice').addEventListener('input',calcFuel);
+function calcFuel(){const t=num('fuelLiters')*num('fuelPrice'); if(t)document.getElementById('fuelTotal').value=t.toFixed(2)}
+
+function isFinished(j){return j.tripStatus==='Finalizado'||(j.tripStatus!=='En curso'&&j.kmEnd!==undefined&&j.kmEnd!==null&&j.kmEnd!==''&&Number(j.kmEnd)>=Number(j.kmStart||0));}
+function completedJobs(month){return db.jobs.filter(j=>isFinished(j)&&((j.finishDate||j.date||'').startsWith(month)));}
+function tripKm(j){return isFinished(j)?Math.max(0,Number(j.kmEnd)-Number(j.kmStart)):0;}
+function emptyKm(j){return Math.max(0,Number(j.emptyKm)||0);}
+function monthEmptyKm(month){return completedJobs(month).reduce((a,j)=>a+emptyKm(j),0);}
+function truckKmForMonth(month){const loaded=completedJobs(month).reduce((a,j)=>a+tripKm(j),0);return loaded+monthEmptyKm(month);}
+function addJob(){
+ const start=document.getElementById('jobKmStart').value,weight=document.getElementById('jobWeightStart').value;
+ if(!txt('jobDate')||!txt('jobLoad')||start===''||weight===''||!Number.isFinite(Number(start))||!Number.isFinite(Number(weight))||Number(start)<0||Number(weight)<0)return alert('Introduce fecha, carga, kilómetros y kilos válidos.');
+ const previous=db.jobs.filter(x=>isFinished(x)&&Number.isFinite(Number(x.kmEnd))&&Number(x.kmEnd)<=Number(start)).sort((a,b)=>Number(b.kmEnd)-Number(a.kmEnd))[0];
+ const calculatedEmpty=previous?Math.max(0,Number(start)-Number(previous.kmEnd)):0;
+ const j={id:id(),date:txt('jobDate'),client:txt('jobClient'),load:txt('jobLoad'),unload:txt('jobUnload'),kmStart:Number(start),weightStart:Number(weight),kmEnd:null,weightEnd:null,finishDate:'',tripStatus:'En curso',emptyKm:calculatedEmpty,previousJobId:previous?.id||'',amount:0,status:'Incluido en factura mensual',notes:txt('jobNotes')};
+ db.jobs.unshift(j);[j.load,j.unload].forEach(p=>{if(p&&!db.places.includes(p))db.places.push(p)});
+ ['jobClient','jobLoad','jobUnload','jobKmStart','jobWeightStart','jobNotes'].forEach(x=>document.getElementById(x).value='');save();showFinishJob();alert('Viaje iniciado y guardado.'+(calculatedEmpty?' Km en vacío desde el trabajo anterior: '+n(calculatedEmpty)+' km.':''));
+}
+function renderTrips(){const pending=db.jobs.filter(j=>!isFinished(j));const old=finishJob.value;finishJob.innerHTML='<option value="">Selecciona un viaje</option>'+pending.map(j=>`<option value="${esc(j.id)}">${esc(j.date)} · ${esc(j.load)} → ${esc(j.unload||'Destino pendiente')} · ${esc(j.client)}</option>`).join('');if(pending.some(j=>j.id===old))finishJob.value=old;showFinishJob();}
+function showFinishJob(){const j=db.jobs.find(x=>x.id===finishJob.value);finishInfo.textContent=j?'Carga: '+j.load+' · '+n(j.kmStart)+' km · '+n(j.weightStart,2)+' kg':'Selecciona un viaje iniciado.';finishUnload.value=j?.unload||'';finishKm.value='';finishWeight.value='';finishDate.value=today();}
+function finishTrip(){const j=db.jobs.find(x=>x.id===finishJob.value);if(!j)return alert('Selecciona un viaje en curso.');const end=finishKm.value,weight=finishWeight.value;
+ if(!finishDate.value||finishDate.value<j.date||!txt('finishUnload')||end===''||weight===''||!Number.isFinite(Number(end))||!Number.isFinite(Number(weight))||Number(end)<Number(j.kmStart)||Number(weight)<0)return alert('Comprueba fecha, lugar, kilómetros finales y kilos descargados. Los km finales deben ser iguales o superiores a los iniciales.');
+ if(!confirm('¿Finalizar este viaje? Se guardarán los datos de descarga.'))return;
+ j.unload=txt('finishUnload');j.kmEnd=Number(end);j.weightEnd=Number(weight);j.finishDate=finishDate.value;j.tripStatus='Finalizado';if(!db.places.includes(j.unload))db.places.push(j.unload);save();alert('Viaje finalizado: '+n(tripKm(j))+' km. Diferencia de peso: '+n(j.weightStart-j.weightEnd,2)+' kg.');}
+function addFuel(){
+ const liters=num('fuelLiters'), price=num('fuelPrice'), total=num('fuelTotal') || liters*price;
+ if(!liters) return alert('Introduce los litros repostados.');
+ const place=txt('fuelPlace');
+ db.fuel.unshift({id:id(),date:txt('fuelDate')||today(),place,km:num('fuelKm'),liters,price,total});
+ if(place&&!db.fuelPlaces.includes(place))db.fuelPlaces.push(place);
+ ['fuelPlace','fuelKm','fuelLiters','fuelPrice','fuelTotal'].forEach(x=>document.getElementById(x).value='');
+ save();
+}
+function addExpense(){
+ if(!num('expAmount')) return alert('Introduce el importe del gasto.');
+ db.expenses.unshift({id:id(),date:txt('expDate')||today(),type:txt('expType'),place:txt('expPlace'),amount:num('expAmount'),notes:txt('expNotes')});
+ ['expPlace','expAmount','expNotes'].forEach(x=>document.getElementById(x).value='');
+ save();
+}
+function del(kind,rid){
+ if(!confirm('¿Eliminar este registro?'))return;
+ db[kind]=db[kind].filter(x=>x.id!==rid);save();
+}
+function render(){
+ const ym=today().slice(0,7);
+ const jobsM=completedJobs(ym);
+ const fuelM=db.fuel.filter(x=>x.date?.startsWith(ym));
+ const expM=db.expenses.filter(x=>x.date?.startsWith(ym));
+ const fact=(db.invoices||[]).find(x=>x.month===ym)?.base||0;
+ const fuelCost=fuelM.reduce((a,x)=>a+(+x.total||0),0);
+ const other=expM.reduce((a,x)=>a+(+x.amount||0),0);
+ const km=jobsM.reduce((a,x)=>a+tripKm(x),0);
+ const liters=fuelM.reduce((a,x)=>a+(+x.liters||0),0);
+ const empty=jobsM.reduce((a,x)=>a+emptyKm(x),0);
+ const totalTruckKm=km+empty;
+ const cons=totalTruckKm?liters/totalTruckKm*100:0;
+ kFact.textContent=money(fact);kFuel.textContent=money(fuelCost);kOther.textContent=money(other);kProfit.textContent=money(fact-fuelCost-other);
+ kPriceKm.textContent=km?money(fact/km)+'/km':'—';kKm.textContent=n(km);kEmptyKm.textContent=n(empty);kTotalKm.textContent=n(totalTruckKm);kLiters.textContent=n(liters,1);kCons.textContent=n(cons,1)+' L/100';kJobs.textContent=jobsM.length;
+
+ jobsBody.innerHTML=db.jobs.map(x=>`<tr><td>${esc(x.date)}</td><td><b>${esc(x.load)}</b> → ${esc(x.unload||'Pendiente')}<br><span class="note">${esc(x.client)}</span></td><td><span class="pill">${isFinished(x)?'Finalizado':'En curso'}</span></td><td>${isFinished(x)?n(tripKm(x)):'—'}</td><td>${n(emptyKm(x))}</td><td>${n(x.weightStart,2)} / ${isFinished(x)?n(x.weightEnd,2):'—'}<br><span class="note">${isFinished(x)?'Diferencia: '+n(Number(x.weightStart||0)-Number(x.weightEnd||0),2)+' kg':''}</span></td><td><button class="danger" onclick="del('jobs','${x.id}')">✕</button></td></tr>`).join('')||'<tr><td colspan="7" class="empty">Sin viajes</td></tr>';
+ renderTrips();
+ fuelBody.innerHTML=db.fuel.map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.place)}</td><td>${n(x.km)}</td><td>${n(x.liters,1)}</td><td>${money(x.price).replace('€','')}</td><td>${money(x.total)}</td><td><button class="danger" onclick="del('fuel','${x.id}')">✕</button></td></tr>`).join('')||'<tr><td colspan="7" class="empty">Sin repostajes</td></tr>';
+ expBody.innerHTML=db.expenses.map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.type)}</td><td>${esc(x.place)}</td><td>${money(x.amount)}</td><td><button class="danger" onclick="del('expenses','${x.id}')">✕</button></td></tr>`).join('')||'<tr><td colspan="5" class="empty">Sin gastos</td></tr>';
+
+ places.innerHTML=db.places.map(p=>`<option value="${esc(p)}">`).join('');
+ fuelPlaces.innerHTML=db.fuelPlaces.map(p=>`<option value="${esc(p)}">`).join('');
+ savedPlaces.innerHTML='<b>Cargas y descargas:</b> '+(db.places.map(esc).join(' · ')||'—')+'<br><br><b>Gasolineras:</b> '+(db.fuelPlaces.map(esc).join(' · ')||'—');
+
+ const items=[
+   ...db.jobs.map(x=>({date:x.date,text:`🚚 ${x.load} → ${x.unload}`})),
+   ...db.fuel.map(x=>({date:x.date,text:`⛽ ${x.place||'Repostaje'} · ${n(x.liters,1)} L · ${money(x.total)}`})),
+   ...db.expenses.map(x=>({date:x.date,text:`💳 ${x.type} · ${x.place||''} · ${money(x.amount)}`}))
+ ].sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,8);
+ recent.innerHTML=items.length?items.map(x=>`<div style="padding:9px 0;border-bottom:1px solid var(--line)"><b>${esc(x.date)}</b><br>${x.text}</div>`).join(''):'Todavía no hay datos.';
+}
+function download(name,content,type){
+ const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);
+}
+async function exportJSON(){const docs=await allDocs();download('control-camion-copia-'+today()+'.json',JSON.stringify({...db,documents:docs},null,2),'application/json')}
+async function importJSON(e){const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!Array.isArray(x.jobs)||!Array.isArray(x.fuel)||!Array.isArray(x.expenses))throw Error('Copia no válida');if(!confirm('La importación sustituirá los registros actuales. ¿Continuar?'))return;await replaceDocs(x.documents||[]);db={jobs:x.jobs,fuel:x.fuel,expenses:x.expenses,places:x.places||[],fuelPlaces:x.fuelPlaces||[],payments:x.payments||[],invoices:x.invoices||[]};save();renderArchive();alert('Copia importada, incluidos los documentos.')}catch(err){alert('No se pudo importar: '+err.message)}e.target.value='';}
+function csvCell(v){return '"'+String(v??'').replaceAll('"','""')+'"'}
+function exportCSV(){
+ let rows=[['TIPO','FECHA','DETALLE 1','DETALLE 2','KM/LITROS','IMPORTE']];
+ db.jobs.filter(isFinished).forEach(x=>rows.push(['Trabajo',x.date,x.load,x.unload,(+x.kmEnd||0)-(+x.kmStart||0),'']));
+ (db.invoices||[]).forEach(x=>rows.push(['Factura mensual',x.date,x.month,x.number,'',x.base]));
+ db.fuel.forEach(x=>rows.push(['Repostaje',x.date,x.place,'Litros',x.liters,x.total]));
+ db.expenses.forEach(x=>rows.push(['Gasto',x.date,x.type,x.place,'',x.amount]));
+ download('control-camion-'+today()+'.csv','\uFEFF'+rows.map(r=>r.map(csvCell).join(';')).join('\n'),'text/csv;charset=utf-8');
+}
+function clearAll(){if(confirm('Esto borrará todos los datos guardados en este dispositivo. ¿Continuar?')){db={jobs:[],fuel:[],expenses:[],places:[],fuelPlaces:[],payments:[],invoices:[]};save()}}
+render();
+</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(()=>{});}</script>
+<script>
+// Documentos en IndexedDB: evita el límite muy reducido de localStorage para fotografías.
+const DOCDB='controlCamionDocumentos';let docDBPromise;
+function docStore(mode='readonly'){if(!docDBPromise)docDBPromise=new Promise((resolve,reject)=>{const req=indexedDB.open(DOCDB,1);req.onupgradeneeded=()=>req.result.createObjectStore('documents',{keyPath:'id'});req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)});return docDBPromise.then(db=>db.transaction('documents',mode).objectStore('documents'))}
+async function allDocs(){const st=await docStore();return new Promise((resolve,reject)=>{const r=st.getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+async function putDoc(doc){const st=await docStore('readwrite');return new Promise((resolve,reject)=>{const r=st.put(doc);r.onsuccess=resolve;r.onerror=()=>reject(r.error)})}
+async function deleteDoc(id){const st=await docStore('readwrite');return new Promise((resolve,reject)=>{const r=st.delete(id);r.onsuccess=resolve;r.onerror=()=>reject(r.error)})}
+async function replaceDocs(docs){const st=await docStore('readwrite');await new Promise((resolve,reject)=>{const r=st.clear();r.onsuccess=resolve;r.onerror=()=>reject(r.error)});for(const d of docs)await putDoc(d)}
+function fileAsDataURL(f){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(f)})}
+function recordOptions(){return [...(db.invoices||[]).map(x=>({id:'invoice:'+x.month,name:'Factura mensual · '+x.month+' · '+x.number})),...db.jobs.map(x=>({id:x.id,name:'Trabajo · '+x.date+' · '+x.load+' → '+x.unload})),...db.fuel.map(x=>({id:x.id,name:'Repostaje · '+x.date+' · '+x.place})),...db.expenses.map(x=>({id:x.id,name:'Gasto · '+x.date+' · '+x.type+' · '+x.place}))]}
+async function renderArchive(){const opts=recordOptions(),old=docRecord.value;docRecord.innerHTML=opts.map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join('');if(opts.some(x=>x.id===old))docRecord.value=old;const oldPay=paymentJob.value;paymentJob.innerHTML=db.jobs.map(x=>`<option value="${esc(x.id)}">${esc(x.date+' · '+x.client+' · '+x.load+' → '+x.unload)}</option>`).join('');if(db.jobs.some(x=>x.id===oldPay))paymentJob.value=oldPay;const docs=await allDocs();docList.innerHTML=docs.length?docs.map(d=>`<div style="padding:9px;border-bottom:1px solid #ddd"><b>${esc(d.type)}</b> · ${esc(d.name)}<br><small>${esc(opts.find(x=>x.id===d.recordId)?.name||'Registro eliminado')}</small><br><button class="secondary" onclick="openDocument('${d.id}')">Ver / descargar</button> <button class="danger" onclick="removeDocument('${d.id}')">Eliminar</button></div>`).join(''):'Todavía no hay documentos.';paymentList.innerHTML=(db.payments||[]).map(x=>`<div style="padding:8px;border-bottom:1px solid #ddd">${esc(x.date)} · ${money(x.amount)} · ${esc(x.note)} <button class="danger" onclick="deletePayment('${x.id}')">Eliminar</button></div>`).join('')||'<p class="note">Sin cobros registrados.</p>'}
+async function addDocuments(){const files=[...docFiles.files];if(!docRecord.value||!files.length)return alert('Selecciona un registro y uno o más archivos.');docStatus.textContent='Guardando archivos...';try{for(const f of files){if(f.size>15*1024*1024)throw Error('El archivo '+f.name+' supera 15 MB.');await putDoc({id:id(),recordId:docRecord.value,type:docType.value,name:f.name,mime:f.type||'application/octet-stream',data:await fileAsDataURL(f),date:today()})}docFiles.value='';docStatus.textContent='Documentos guardados en este dispositivo.';await renderArchive()}catch(e){docStatus.textContent='Error: '+e.message+' Comprueba el espacio libre.'}}
+async function openDocument(id){const d=(await allDocs()).find(x=>x.id===id);if(!d)return;const a=document.createElement('a');a.href=d.data;a.download=d.name;document.body.appendChild(a);a.click();a.remove()}
+async function removeDocument(id){if(confirm('¿Eliminar este documento?')){await deleteDoc(id);renderArchive()}}
+function addPayment(){if(!paymentJob.value||!num('paymentAmount'))return alert('Selecciona un trabajo y un importe.');db.payments=db.payments||[];db.payments.push({id:id(),jobId:paymentJob.value,date:paymentDate.value||today(),amount:num('paymentAmount'),note:txt('paymentNote')});paymentAmount.value='';paymentNote.value='';save();renderArchive()}
+function deletePayment(pid){if(confirm('¿Eliminar cobro?')){db.payments=(db.payments||[]).filter(x=>x.id!==pid);save();renderArchive()}}
+const originalSave=save;save=function(){originalSave();renderArchive()};
+const originalClear=clearAll;clearAll=async function(){if(!confirm('¿Borrar todos los registros, cobros Y documentos de este dispositivo?'))return;db={jobs:[],fuel:[],expenses:[],places:[],fuelPlaces:[],payments:[]};await replaceDocs([]);save()};
+function showInvoice(){const ym=invoiceMonth.value;const x=(db.invoices||[]).find(i=>i.month===ym);invoiceNumber.value=x?.number||'';invoiceDate.value=x?.date||today();invoiceBase.value=x?.base??'';invoiceVat.value=x?.vat??'';invoiceTotal.value=x?.total??'';invoicePaidDate.value=x?.paidDate||'';invoicePaid.value=x?.paid??'';const jobs=completedJobs(ym);const km=jobs.reduce((a,j)=>a+tripKm(j),0);invoiceInfo.textContent=jobs.length+' trabajos · '+n(km)+' km · '+(x&&km?money(x.base/km)+'/km':'Introduce la factura para calcular €/km');invoiceHistory.innerHTML=(db.invoices||[]).slice().sort((a,b)=>b.month.localeCompare(a.month)).map(i=>'<div style="border-top:1px solid #ddd;padding:8px">'+esc(i.month)+' · '+esc(i.number)+' · Base '+money(i.base)+' · Cobrado '+money(i.paid)+' <button class="secondary" onclick="invoiceMonth.value=\''+esc(i.month)+'\';showInvoice()">Ver</button></div>').join('')||'<p class="note">Todavía no hay facturas mensuales.</p>'}
+async function saveInvoice(){const month=invoiceMonth.value,base=num('invoiceBase'),vat=num('invoiceVat'),total=invoiceTotal.value===''?base+vat:num('invoiceTotal'),paid=num('invoicePaid');if(!month||!txt('invoiceNumber')||!invoiceDate.value||!invoiceBase.value||base<0||total<0||paid<0)return alert('Completa mes, número, fecha y base con importes válidos.');if(paid>total)return alert('El cobro no puede superar el total de la factura.');const existing=(db.invoices||[]).find(i=>i.month===month);if(existing&&!confirm('¿Actualizar la factura registrada de '+month+'?'))return;const file=invoiceFile.files[0];if(file&&file.size>15*1024*1024)return alert('El archivo supera 15 MB.');if(file){try{await putDoc({id:id(),recordId:'invoice:'+month,type:'Factura mensual',name:file.name,mime:file.type||'application/octet-stream',data:await fileAsDataURL(file),date:today()})}catch(e){return alert('No se pudo guardar la factura adjunta: '+e.message)}}db.invoices=db.invoices||[];const record={month,number:txt('invoiceNumber'),date:invoiceDate.value,base,vat,total,paid,paidDate:invoicePaidDate.value};if(existing)Object.assign(existing,record);else db.invoices.push(record);invoiceFile.value='';save();showInvoice();renderArchive();alert('Factura mensual guardada.')} 
+invoiceMonth.value=today().slice(0,7);invoiceDate.value=today();reportMonth.value=today().slice(0,7);invoiceMonth.addEventListener('change',showInvoice);showInvoice();
+function reportTable(head,rows){return '<table><thead><tr>'+head.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(c=>'<td>'+esc(c)+'</td>').join('')+'</tr>').join('')+'</tbody></table>'}
+async function printMonthly(){const ym=reportMonth.value;if(!ym)return alert('Selecciona un mes.');const win=window.open('','_blank');if(!win)return alert('Permite ventanas emergentes para generar el informe.');win.document.write('<p>Preparando informe...</p>');const jobs=completedJobs(ym),fuel=db.fuel.filter(x=>x.date?.startsWith(ym)),expenses=db.expenses.filter(x=>x.date?.startsWith(ym)),payments=(db.payments||[]).filter(x=>x.date?.startsWith(ym));const ids=new Set([...jobs,...fuel,...expenses].map(x=>x.id));const docs=(await allDocs()).filter(x=>ids.has(x.recordId));const sum=(a,key)=>a.reduce((t,x)=>t+(+x[key]||0),0);const invoice=(db.invoices||[]).find(x=>x.month===ym);const amount=invoice?Number(invoice.base)||0:0,paid=invoice?Number(invoice.paid)||0:0,fc=sum(fuel,'total'),ec=sum(expenses,'amount');const kmTotal=jobs.reduce((t,x)=>t+tripKm(x),0);const emptyTotal=jobs.reduce((t,x)=>t+emptyKm(x),0);const truckKmTotal=kmTotal+emptyTotal;const invoiceDocs=(await allDocs()).filter(x=>x.recordId==='invoice:'+ym);docs.push(...invoiceDocs);const styles=`<style>@page{size:A4;margin:14mm}body{font:11px Arial;color:#111}h1{font-size:23px}h2{margin-top:22px;border-bottom:2px solid #222}table{width:100%;border-collapse:collapse;table-layout:fixed}th,td{border:1px solid #bbb;padding:5px;overflow-wrap:anywhere}th{background:#eee}.attachment{break-before:page}.attachment img{max-width:100%;max-height:230mm;object-fit:contain}p{line-height:1.5}@media print{button{display:none}}</style>`;let content=`<h1>Control Camión · Cierre mensual ${esc(ym)}</h1><p>Generado: ${esc(today())}. Informe de control interno; no sustituye libros oficiales ni justificantes originales.</p><h2>Resumen</h2>${reportTable(['Concepto','Importe'],[['Factura mensual (base sin IVA)',money(amount)],['Factura nº',invoice?.number||'Sin registrar'],['Km con carga',String(kmTotal)],['Km en vacío',String(emptyTotal)],['Km totales camión',String(truckKmTotal)],['Consumo medio real',truckKmTotal?n(sum(fuel,'liters')/truckKmTotal*100,1)+' L/100':'No calculable'],['Precio por km',kmTotal?money(amount/kmTotal)+'/km':'No calculable'],['Cobrado de esta factura',money(paid)],['Pendiente de esta factura',money(Math.max(0,(invoice?.total||0)-paid))],['Combustible',money(fc)],['Otros gastos',money(ec)],['Resultado orientativo (trabajos − gastos)',money(amount-fc-ec)]])}<h2>Trabajos</h2>${reportTable(['Fecha','Cliente','Carga','Descarga','Km carga','Km vacío anterior','Observaciones'],jobs.map(x=>[x.date,x.client,x.load,x.unload,tripKm(x),emptyKm(x),x.notes||'']))}<h2>Cobro de factura mensual</h2>${reportTable(['Factura','Fecha cobro','Cobrado','Total con IVA','Pendiente'],invoice?[[invoice.number,invoice.paidDate||'Pendiente',money(invoice.paid),money(invoice.total),money(Math.max(0,invoice.total-invoice.paid))]]:[])}<h2>Repostajes</h2>${reportTable(['Fecha','Lugar','Km','Litros','€/L','Total'],fuel.map(x=>[x.date,x.place,x.km,x.liters,x.price,money(x.total)]))}<h2>Gastos</h2>${reportTable(['Fecha','Tipo','Lugar','Importe'],expenses.map(x=>[x.date,x.type,x.place,money(x.amount)]))}<h2>Anexos documentales</h2><p>${docs.length} archivo(s) vinculados a registros de este mes. Los PDF originales se deben descargar y archivar aparte: el informe los enumera, pero no incorpora sus páginas.</p>`;for(const d of docs){content+=`<section class="attachment"><h2>${esc(d.type)} · ${esc(d.name)}</h2><p>Registro: ${esc(d.recordId==='invoice:'+ym?(invoice?.date||''):([...jobs,...fuel,...expenses].find(x=>x.id===d.recordId)?.date||''))}</p>`;if(d.mime.startsWith('image/'))content+=`<img src="${d.data}">`;else content+='<p>Documento PDF adjunto: descargar desde la sección Documentos y conservar junto al informe.</p>';content+='</section>'}win.document.open();win.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Cierre '+esc(ym)+'</title>'+styles+'</head><body>'+content+'<p>Fin del informe</p></body></html>');win.document.close();win.focus();setTimeout(()=>win.print(),900)}
+reportMonth.value=today().slice(0,7);paymentDate.value=today();renderArchive();
+</script>
+</body>
+</html>
