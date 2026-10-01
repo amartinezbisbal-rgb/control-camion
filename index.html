@@ -50,6 +50,17 @@ th{color:#4b5563}
 .note{font-size:12px;color:var(--muted)}
 .empty{padding:16px;text-align:center;color:var(--muted)}
 hr{border:0;border-top:1px solid var(--line);margin:14px 0}
+
+/* Recorte manual del escáner */
+#cropModal{position:fixed;inset:0;background:#111827f2;z-index:1000;display:none;flex-direction:column;padding:env(safe-area-inset-top) 10px env(safe-area-inset-bottom)}
+#cropModal.open{display:flex}
+#cropTop{color:white;padding:10px 4px;text-align:center}
+#cropStage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#cropCanvas{max-width:100%;max-height:100%;touch-action:none;background:#000;box-shadow:0 0 0 1px #ffffff33}
+#cropActions{background:#fff;border-radius:14px;padding:10px;margin-top:8px}
+#cropActions .toolbar{margin-top:0;justify-content:center}
+#cropActions button{flex:1}
+
 </style>
 </head>
 <body>
@@ -171,11 +182,25 @@ hr{border:0;border-top:1px solid var(--line);margin:14px 0}
 
 <section id="archivo" class="page"><div class="card"><h2>🧾 Factura única del mes</h2><p class="note">Registra la base sin IVA para calcular el precio por km. Adjunta aquí tu factura existente (PDF o foto). Los cobros se registran por separado.</p><div class="grid"><div><label>Mes de los trabajos</label><input id="invoiceMonth" type="month"></div><div><label>Número de factura</label><input id="invoiceNumber" placeholder="Ej. F-09/2026"></div><div><label>Fecha de factura</label><input id="invoiceDate" type="date"></div><div><label>Base imponible (€), sin IVA</label><input id="invoiceBase" type="number" min="0" step="0.01" inputmode="decimal"></div><div><label>IVA (€), si corresponde</label><input id="invoiceVat" type="number" min="0" step="0.01" inputmode="decimal"></div><div><label>Total factura (€)</label><input id="invoiceTotal" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Se calcula si se deja vacío"></div><div><label>Fecha de cobro (opcional)</label><input id="invoicePaidDate" type="date"></div><div><label>Importe cobrado (€)</label><input id="invoicePaid" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0 si está pendiente"></div></div><label>Adjuntar factura existente (PDF o foto)</label><input id="invoiceFile" type="file" accept="application/pdf,image/*"><div class="toolbar"><button class="primary" onclick="saveInvoice()">Guardar factura mensual</button></div><p id="invoiceInfo" class="note"></p><div id="invoiceHistory"></div></div><div class="card"><h2>📎 Fotografías y documentos</h2><p class="note">Selecciona un trabajo, repostaje o gasto ya guardado. Puedes adjuntar fotos, albaranes, facturas existentes y PDF.</p><label>Registro</label><select id="docRecord"></select><label>Clase de documento</label><select id="docType"><option>Foto del trabajo</option><option>Albarán</option><option>Factura</option><option>Ticket</option><option>Otro</option></select><label>Fotos o archivos (puedes seleccionar varios)</label><input type="file" id="docFiles" accept="image/*,application/pdf" multiple>
 <label>Escanear documento con cámara / fotos</label><input type="file" id="scanFiles" accept="image/*" capture="environment" multiple>
-<div class="toolbar"><button class="primary" onclick="addDocuments()">Adjuntar documentos</button><button class="secondary" onclick="scanToPDF()">📷 Guardar escaneo como PDF</button></div>
+<div class="toolbar"><button class="primary" onclick="addDocuments()">Adjuntar documentos</button><button class="secondary" onclick="scanToPDF()">✂️ Recortar y guardar como PDF</button></div>
 <p class="note">Puedes usar una o varias imágenes. Bismatrans las unirá en un único PDF.</p><p class="note" id="docStatus"></p><h3>Documentos guardados</h3><div id="docList"></div></div><div class="card" style="display:none"><h2>💶 Cobros y pagos</h2><label>Trabajo relacionado</label><select id="paymentJob"></select><div class="grid"><div><label>Fecha de cobro</label><input type="date" id="paymentDate"></div><div><label>Importe cobrado (€)</label><input type="number" step="0.01" id="paymentAmount"></div></div><label>Referencia / observaciones</label><input id="paymentNote"><div class="toolbar"><button class="primary" onclick="addPayment()">Guardar cobro</button></div><div id="paymentList"></div></div><div class="card"><h2>🖨️ Cierre mensual</h2><label>Mes a imprimir</label><input type="month" id="reportMonth"><p class="note">Genera un único PDF con el resumen mensual y, al final, los PDF adjuntos vinculados a los registros del mes. Las fotografías también se incluyen como anexos.</p><button class="primary" onclick="printMonthly()">Abrir informe mensual</button></div></section>
 <datalist id="places"></datalist>
 <datalist id="fuelPlaces"></datalist>
 </main>
+
+
+<div id="cropModal" aria-hidden="true">
+  <div id="cropTop"><b>✂️ Ajustar documento</b><br><span id="cropCounter" style="font-size:12px">Mueve las esquinas hasta los bordes del ticket o albarán.</span></div>
+  <div id="cropStage"><canvas id="cropCanvas"></canvas></div>
+  <div id="cropActions">
+    <div class="toolbar">
+      <button class="secondary" type="button" onclick="resetCrop()">↺ Restablecer</button>
+      <button class="primary" type="button" onclick="acceptCrop()">✓ Usar recorte</button>
+      <button class="danger" type="button" onclick="cancelCrop()">Cancelar</button>
+    </div>
+    <p class="note" style="text-align:center;margin:7px 0 0">Arrastra los 4 círculos hasta las esquinas del documento.</p>
+  </div>
+</div>
 
 <nav class="tabs">
   <button class="active" onclick="showPage('inicio',this)">🏠<br>Inicio</button>
@@ -322,10 +347,98 @@ function recordOptions(){return [...(db.invoices||[]).map(x=>({id:'invoice:'+x.m
 async function renderArchive(){const opts=recordOptions(),old=docRecord.value;docRecord.innerHTML=opts.map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join('');if(opts.some(x=>x.id===old))docRecord.value=old;const oldPay=paymentJob.value;paymentJob.innerHTML=db.jobs.map(x=>`<option value="${esc(x.id)}">${esc(x.date+' · '+x.client+' · '+x.load+' → '+x.unload)}</option>`).join('');if(db.jobs.some(x=>x.id===oldPay))paymentJob.value=oldPay;const docs=await allDocs();docList.innerHTML=docs.length?docs.map(d=>`<div style="padding:9px;border-bottom:1px solid #ddd"><b>${esc(d.type)}</b> · ${esc(d.name)}<br><small>${esc(opts.find(x=>x.id===d.recordId)?.name||'Registro eliminado')}</small><br><button class="secondary" onclick="viewDocument('${d.id}')">👁 Ver</button> <button class="secondary" onclick="shareDocument('${d.id}')">📤 Compartir / guardar</button> <button class="danger" onclick="removeDocument('${d.id}')">Eliminar</button></div>`).join(''):'Todavía no hay documentos.';paymentList.innerHTML=(db.payments||[]).map(x=>`<div style="padding:8px;border-bottom:1px solid #ddd">${esc(x.date)} · ${money(x.amount)} · ${esc(x.note)} <button class="danger" onclick="deletePayment('${x.id}')">Eliminar</button></div>`).join('')||'<p class="note">Sin cobros registrados.</p>'}
 
 function dataBytes(u){const b=atob(u.split(',')[1]),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
+
+let cropQueue=[],cropResults=[],cropIndex=0,cropImg=null,cropPts=[],cropDrag=-1,cropResolve=null,cropReject=null,cropScale=1,cropOffsetX=0,cropOffsetY=0;
+
+function loadImageURL(u){return new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=no;im.src=u})}
+
+async function prepareCropFile(f,index,total){
+  const u=await fileAsDataURL(f);
+  cropImg=await loadImageURL(u);
+  cropIndex=index;
+  const stage=document.getElementById('cropStage'),canvas=document.getElementById('cropCanvas');
+  const maxW=Math.max(280,stage.clientWidth-8),maxH=Math.max(280,stage.clientHeight-8);
+  cropScale=Math.min(maxW/cropImg.naturalWidth,maxH/cropImg.naturalHeight,1);
+  canvas.width=Math.max(1,Math.round(cropImg.naturalWidth*cropScale));
+  canvas.height=Math.max(1,Math.round(cropImg.naturalHeight*cropScale));
+  canvas.style.width=canvas.width+'px';canvas.style.height=canvas.height+'px';
+  const m=Math.max(18,Math.min(canvas.width,canvas.height)*.045);
+  cropPts=[{x:m,y:m},{x:canvas.width-m,y:m},{x:canvas.width-m,y:canvas.height-m},{x:m,y:canvas.height-m}];
+  cropCounter.textContent='Foto '+(index+1)+' de '+total+' · Arrastra las 4 esquinas.';
+  drawCrop();
+}
+
+function drawCrop(){
+  const c=cropCanvas,ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.drawImage(cropImg,0,0,c.width,c.height);
+  ctx.save();ctx.fillStyle='rgba(0,0,0,.48)';ctx.fillRect(0,0,c.width,c.height);
+  ctx.beginPath();ctx.moveTo(cropPts[0].x,cropPts[0].y);for(let i=1;i<4;i++)ctx.lineTo(cropPts[i].x,cropPts[i].y);ctx.closePath();ctx.clip();ctx.drawImage(cropImg,0,0,c.width,c.height);ctx.restore();
+  ctx.save();ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(cropPts[0].x,cropPts[0].y);for(let i=1;i<4;i++)ctx.lineTo(cropPts[i].x,cropPts[i].y);ctx.closePath();ctx.stroke();
+  for(const p of cropPts){ctx.beginPath();ctx.arc(p.x,p.y,11,0,Math.PI*2);ctx.fillStyle='#2563eb';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.stroke()}ctx.restore();
+}
+
+function cropPos(e){const r=cropCanvas.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*(cropCanvas.width/r.width),y:(t.clientY-r.top)*(cropCanvas.height/r.height)}}
+function cropDown(e){e.preventDefault();const p=cropPos(e);let best=-1,dist=1e9;cropPts.forEach((q,i)=>{const d=Math.hypot(q.x-p.x,q.y-p.y);if(d<dist){dist=d;best=i}});if(dist<55)cropDrag=best}
+function cropMove(e){if(cropDrag<0)return;e.preventDefault();const p=cropPos(e);cropPts[cropDrag]={x:Math.max(0,Math.min(cropCanvas.width,p.x)),y:Math.max(0,Math.min(cropCanvas.height,p.y))};drawCrop()}
+function cropUp(){cropDrag=-1}
+cropCanvas.addEventListener('touchstart',cropDown,{passive:false});cropCanvas.addEventListener('touchmove',cropMove,{passive:false});cropCanvas.addEventListener('touchend',cropUp);
+cropCanvas.addEventListener('mousedown',cropDown);window.addEventListener('mousemove',cropMove);window.addEventListener('mouseup',cropUp);
+
+function resetCrop(){if(!cropCanvas.width)return;const m=Math.max(18,Math.min(cropCanvas.width,cropCanvas.height)*.045);cropPts=[{x:m,y:m},{x:cropCanvas.width-m,y:m},{x:cropCanvas.width-m,y:cropCanvas.height-m},{x:m,y:cropCanvas.height-m}];drawCrop()}
+
+function bilerp(a,b,c,d,u,v){return a*(1-u)*(1-v)+b*u*(1-v)+c*u*v+d*(1-u)*v}
+function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+
+function makeCroppedPage(){
+  // Perspective-aware resampling of the selected quadrilateral.
+  const p=cropPts.map(q=>({x:q.x/cropScale,y:q.y/cropScale}));
+  const W=Math.max(240,Math.round(Math.max(dist(p[0],p[1]),dist(p[3],p[2]))));
+  const H=Math.max(240,Math.round(Math.max(dist(p[0],p[3]),dist(p[1],p[2]))));
+  const maxDim=1800,sc=Math.min(1,maxDim/Math.max(W,H)),ow=Math.max(1,Math.round(W*sc)),oh=Math.max(1,Math.round(H*sc));
+  const src=document.createElement('canvas');src.width=cropImg.naturalWidth;src.height=cropImg.naturalHeight;const sx=src.getContext('2d');sx.drawImage(cropImg,0,0);
+  const srcData=sx.getImageData(0,0,src.width,src.height).data;
+  const dst=document.createElement('canvas');dst.width=ow;dst.height=oh;const dx=dst.getContext('2d'),img=dx.createImageData(ow,oh),dd=img.data;
+  // Bilinear map from output rectangle into selected quadrilateral; nearest-neighbour pixel sample keeps it fast on iPhone.
+  for(let y=0;y<oh;y++){const v=oh<=1?0:y/(oh-1);for(let x=0;x<ow;x++){const u=ow<=1?0:x/(ow-1);
+    const ix=Math.max(0,Math.min(src.width-1,Math.round(bilerp(p[0].x,p[1].x,p[2].x,p[3].x,u,v))));
+    const iy=Math.max(0,Math.min(src.height-1,Math.round(bilerp(p[0].y,p[1].y,p[2].y,p[3].y,u,v))));
+    const si=(iy*src.width+ix)*4,di=(y*ow+x)*4;dd[di]=srcData[si];dd[di+1]=srcData[si+1];dd[di+2]=srcData[si+2];dd[di+3]=255;
+  }}
+  dx.putImageData(img,0,0);
+  return{u:dst.toDataURL('image/jpeg',.84),w:ow,h:oh};
+}
+
+function acceptCrop(){try{const pg=makeCroppedPage();if(cropResolve){const r=cropResolve;cropResolve=null;cropReject=null;r(pg)}}catch(e){if(cropReject){const r=cropReject;cropResolve=null;cropReject=null;r(e)}}}
+function cancelCrop(){if(cropReject){const r=cropReject;cropResolve=null;cropReject=null;r(new Error('Escaneo cancelado'))}}
+function cropOne(f,index,total){return new Promise(async(resolve,reject)=>{cropResolve=resolve;cropReject=reject;cropModal.classList.add('open');cropModal.setAttribute('aria-hidden','false');try{await prepareCropFile(f,index,total)}catch(e){cropResolve=null;cropReject=null;reject(e)}})}
+function closeCropModal(){cropModal.classList.remove('open');cropModal.setAttribute('aria-hidden','true');cropImg=null;cropPts=[]}
+
 async function jpegPage(f){const u=await fileAsDataURL(f),im=await new Promise((ok,no)=>{const x=new Image();x.onload=()=>ok(x);x.onerror=no;x.src=u}),s=Math.min(1,1800/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');c.width=Math.round(im.naturalWidth*s);c.height=Math.round(im.naturalHeight*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);return{u:c.toDataURL('image/jpeg',.82),w:c.width,h:c.height}}
 function imagePDF(pg){const E=new TextEncoder(),C=[];let L=0,O=[0],objs=[()=>`<< /Type /Catalog /Pages 2 0 R >>`,null],kids=[];const P=x=>{x=typeof x==='string'?E.encode(x):x;C.push(x);L+=x.length};for(const p of pg){let ib=dataBytes(p.u),ino=objs.length+1;objs.push(()=>({h:`<< /Type /XObject /Subtype /Image /Width ${p.w} /Height ${p.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${ib.length} >>\nstream\n`,b:ib,t:'\nendstream'}));let pw=595.28,ph=841.89,r=Math.min(pw/p.w,ph/p.h),w=p.w*r,h=p.h*r,x=(pw-w)/2,y=(ph-h)/2,ct=`q\n${w} 0 0 ${h} ${x} ${y} cm\n/Im${ino} Do\nQ\n`,cno=objs.length+1;objs.push(()=>`<< /Length ${E.encode(ct).length} >>\nstream\n${ct}endstream`);let pno=objs.length+1;objs.push(()=>`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pw} ${ph}] /Resources << /XObject << /Im${ino} ${ino} 0 R >> >> /Contents ${cno} 0 R >>`);kids.push(pno)}objs[1]=()=>`<< /Type /Pages /Kids [${kids.map(x=>x+' 0 R').join(' ')}] /Count ${kids.length} >>`;P('%PDF-1.4\n');for(let i=0;i<objs.length;i++){O[i+1]=L;P(`${i+1} 0 obj\n`);let v=objs[i]();if(typeof v==='string')P(v);else{P(v.h);P(v.b);P(v.t)}P('\nendobj\n')}let xr=L;P(`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`);for(let i=1;i<=objs.length;i++)P(String(O[i]).padStart(10,'0')+' 00000 n \n');P(`trailer\n<< /Size ${objs.length+1} /Root 1 0 R >>\nstartxref\n${xr}\n%%EOF`);return new Blob(C,{type:'application/pdf'})}
 function blobURL(b){return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=no;r.readAsDataURL(b)})}
-async function scanToPDF(){const fs=[...scanFiles.files];if(!docRecord.value)return alert('Selecciona primero un registro.');if(!fs.length){scanFiles.click();return}docStatus.textContent='Creando PDF...';try{const pg=[];for(const f of fs)pg.push(await jpegPage(f));const b=imagePDF(pg),name='Escaneo-'+today()+'-'+Date.now()+'.pdf';await putDoc({id:id(),recordId:docRecord.value,type:docType.value,name,mime:'application/pdf',data:await blobURL(b),date:today()});scanFiles.value='';docStatus.textContent='PDF guardado correctamente.';await renderArchive()}catch(e){docStatus.textContent='Error al crear PDF: '+e.message}}
+async function scanToPDF(){
+  const fs=[...scanFiles.files];
+  if(!docRecord.value)return alert('Selecciona primero un registro.');
+  if(!fs.length){scanFiles.click();return}
+  docStatus.textContent='Preparando recorte...';
+  try{
+    const pg=[];
+    for(let i=0;i<fs.length;i++){
+      docStatus.textContent='Recortando foto '+(i+1)+' de '+fs.length+'...';
+      const page=await cropOne(fs[i],i,fs.length);
+      pg.push(page);
+    }
+    closeCropModal();
+    docStatus.textContent='Creando PDF...';
+    const b=imagePDF(pg),name='Escaneo-'+today()+'-'+Date.now()+'.pdf';
+    await putDoc({id:id(),recordId:docRecord.value,type:docType.value,name,mime:'application/pdf',data:await blobURL(b),date:today()});
+    scanFiles.value='';
+    docStatus.textContent='PDF recortado y guardado correctamente.';
+    await renderArchive();
+  }catch(e){
+    closeCropModal();
+    docStatus.textContent=e.message==='Escaneo cancelado'?'Escaneo cancelado.':'Error al crear PDF: '+e.message;
+  }
+}
 
 async function addDocuments(){const files=[...docFiles.files];if(!docRecord.value||!files.length)return alert('Selecciona un registro y uno o más archivos.');docStatus.textContent='Guardando archivos...';try{for(const f of files){if(f.size>15*1024*1024)throw Error('El archivo '+f.name+' supera 15 MB.');await putDoc({id:id(),recordId:docRecord.value,type:docType.value,name:f.name,mime:f.type||'application/octet-stream',data:await fileAsDataURL(f),date:today()})}docFiles.value='';docStatus.textContent='Documentos guardados en este dispositivo.';await renderArchive()}catch(e){docStatus.textContent='Error: '+e.message+' Comprueba el espacio libre.'}}
 function dataURLtoBlob(u){const q=u.split(','),m=(q[0].match(/:(.*?);/)||[])[1]||'application/octet-stream',b=atob(q[1]||''),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return new Blob([a],{type:m})}
