@@ -153,7 +153,7 @@ header{background:#397ba9;border-radius:0;box-shadow:none}header h1{font-weight:
 <div class="kpi"><span>Precio por km</span><b id="kPriceKm">—</b></div><div class="kpi"><span>Nº trabajos</span><b id="kJobs">0</b></div>
 </div>
 </div>
-<div class="card">
+<div class="card" hidden style="display:none!important">
 <h3>Últimos movimientos</h3>
 <div class="empty" id="recent">Todavía no hay datos.</div>
 </div>
@@ -188,7 +188,7 @@ header{background:#397ba9;border-radius:0;box-shadow:none}header h1{font-weight:
 <p class="note">Marca Sí solo cuando el depósito quede lleno. Los parciales se suman al siguiente llenado completo, incluso entre meses. El primer lleno sirve de referencia.</p>
 <div class="toolbar"><button class="primary" onclick="addFuel()">Guardar repostaje</button></div>
 </div>
-<div class="card">
+<div class="card" hidden style="display:none!important">
 <h3>Repostajes</h3>
 <div class="table-wrap"><table style="display:none"><thead><tr><th>Tipo</th><th>Fecha</th><th>Lugar</th><th>Km</th><th>Litros</th><th>Lleno</th><th>Consumo intervalo</th><th>€/L</th><th>Total</th><th></th></tr></thead><tbody id="fuelBody"></tbody></table></div>
 </div>
@@ -211,7 +211,7 @@ header{background:#397ba9;border-radius:0;box-shadow:none}header h1{font-weight:
 <label>Observaciones</label><textarea id="expNotes"></textarea>
 <div class="toolbar"><button class="primary" onclick="addExpense()">Guardar gasto</button></div>
 </div>
-<div class="card">
+<div class="card" hidden style="display:none!important">
 <h3>Gastos</h3>
 <div class="table-wrap"><table style="display:none"><thead><tr><th>Fecha</th><th>Tipo</th><th>Lugar</th><th>Importe</th><th></th></tr></thead><tbody id="expBody"></tbody></table></div>
 </div>
