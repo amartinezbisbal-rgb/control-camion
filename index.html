@@ -1,15 +1,16 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#397ba9" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<meta content="#397ba9" name="theme-color"/>
 <title>Bismatrans,S.L</title>
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Bismatrans">
-<link rel="apple-touch-icon" href="icon.png">
+<link href="manifest.webmanifest" rel="manifest"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="default" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="Bismatrans" name="apple-mobile-web-app-title"/>
+<link href="icon.png" rel="apple-touch-icon"/>
 <style>
 :root{
   --bg:#f3f4f6;--card:#ffffff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;
@@ -125,157 +126,144 @@ header{background:#397ba9;border-radius:0;box-shadow:none}header h1{font-weight:
 </head>
 <body>
 <header>
-  <h1><span class="brand-truck" aria-hidden="true"><svg width="39" height="31" viewBox="0 0 48 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="7" width="27" height="19" rx="3" fill="#ffffff"/><path d="M29 13h9l7 8v5H29V13Z" fill="#ffffff"/><path d="M34 16h3l4 5h-7v-5Z" fill="#1688F6"/><circle cx="12" cy="27" r="5" fill="#0C4EAD" stroke="white" stroke-width="2"/><circle cx="37" cy="27" r="5" fill="#0C4EAD" stroke="white" stroke-width="2"/><path d="M7 13h17M7 18h12" stroke="#1688F6" stroke-width="2" stroke-linecap="round"/></svg></span> Bismatrans,S.L</h1>
+<h1><span aria-hidden="true" class="brand-truck"><svg fill="none" height="31" viewbox="0 0 48 36" width="39" xmlns="http://www.w3.org/2000/svg"><rect fill="#ffffff" height="19" rx="3" width="27" x="2" y="7"></rect><path d="M29 13h9l7 8v5H29V13Z" fill="#ffffff"></path><path d="M34 16h3l4 5h-7v-5Z" fill="#1688F6"></path><circle cx="12" cy="27" fill="#0C4EAD" r="5" stroke="white" stroke-width="2"></circle><circle cx="37" cy="27" fill="#0C4EAD" r="5" stroke="white" stroke-width="2"></circle><path d="M7 13h17M7 18h12" stroke="#1688F6" stroke-linecap="round" stroke-width="2"></path></svg></span> Bismatrans,S.L</h1>
 </header>
-
 <main>
-<section id="inicio" class="page active">
+<section class="page active" id="inicio">
 <div id="activeTripsHome"></div>
-  <div class="card">
-    <h2>Resumen del mes</h2>
-    <div class="grid grid-4">
-      <div class="kpi"><span>Factura mensual (base)</span><b id="kFact">0,00 €</b></div>
-      <div class="kpi"><span>Combustible</span><b id="kFuel">0,00 €</b></div>
-      <div class="kpi"><span>Otros gastos</span><b id="kOther">0,00 €</b></div>
-      <div class="kpi"><span>Resultado estimado</span><b id="kProfit">0,00 €</b></div>
-    </div>
-  </div>
-  <div class="card">
-    <h3>Actividad</h3>
-    <div class="grid grid-4">
-      <div class="kpi"><span>Km con carga</span><b id="kKm">0</b></div>
-      <div class="kpi"><span>Km en vacío</span><b id="kEmptyKm">0</b></div>
-      <div class="kpi"><span>Km totales camión</span><b id="kTotalKm">0</b></div>
-      <div class="kpi"><span>Gasoil</span><b id="kLiters">0 L</b></div>
-      
+<div class="card">
+<h2>Resumen del mes</h2>
+<div class="grid grid-4">
+<div class="kpi"><span>Factura mensual (base)</span><b id="kFact">0,00 €</b></div>
+<div class="kpi"><span>Combustible</span><b id="kFuel">0,00 €</b></div>
+<div class="kpi"><span>Otros gastos</span><b id="kOther">0,00 €</b></div>
+<div class="kpi"><span>Resultado estimado</span><b id="kProfit">0,00 €</b></div>
+</div>
+</div>
+<div class="card">
+<h3>Actividad</h3>
+<div class="grid grid-4">
+<div class="kpi"><span>Km con carga</span><b id="kKm">0</b></div>
+<div class="kpi"><span>Km en vacío</span><b id="kEmptyKm">0</b></div>
+<div class="kpi"><span>Km totales camión</span><b id="kTotalKm">0</b></div>
+<div class="kpi"><span>Gasoil</span><b id="kLiters">0 L</b></div>
 <div class="kpi"><span>Gasoil · último lleno → lleno</span><b id="kFullCons">—</b></div>
-      <div class="kpi"><span>AdBlue</span><b id="kAdblueLiters">0 L</b></div>
-      
+<div class="kpi"><span>AdBlue</span><b id="kAdblueLiters">0 L</b></div>
 <div class="kpi"><span>AdBlue · último lleno → lleno</span><b id="kAdblueFullCons">—</b></div>
-      
-      <div class="kpi"><span>Precio por km</span><b id="kPriceKm">—</b></div><div class="kpi"><span>Nº trabajos</span><b id="kJobs">0</b></div>
-    </div>
-  </div>
-  <div class="card">
-    <h3>Últimos movimientos</h3>
-    <div id="recent" class="empty">Todavía no hay datos.</div>
-  </div>
+<div class="kpi"><span>Precio por km</span><b id="kPriceKm">—</b></div><div class="kpi"><span>Nº trabajos</span><b id="kJobs">0</b></div>
+</div>
+</div>
+<div class="card">
+<h3>Últimos movimientos</h3>
+<div class="empty" id="recent">Todavía no hay datos.</div>
+</div>
 </section>
-
-<section id="trabajos" class="page">
+<section class="page" id="trabajos">
 <div id="activeTripsWork"></div>
-<div class="card"><h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#2384ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="12" height="11" rx="2"/><path d="M14 9h4l4 4v4h-8"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg> Iniciar viaje</h2><p class="note">Registra la carga ahora. Completarás la descarga más tarde.</p><div class="grid">
-<div><label>Fecha de carga</label><input type="date" id="jobDate"></div><div><label>Cliente</label><input id="jobClient" placeholder="Cliente"></div>
-<div><label>Lugar de carga</label><input id="jobLoad" list="places" placeholder="Origen"></div><div><label>Destino previsto (opcional)</label><input id="jobUnload" list="places" placeholder="Destino"></div>
-<div><label>Km en carga</label><input id="jobKmStart" type="number" min="0" step="1" inputmode="numeric"></div><div><label>Kilos en carga</label><input id="jobWeightStart" type="number" min="0" step="0.01" inputmode="decimal"></div>
+<div class="card"><h2><svg aria-hidden="true" class="section-icon" fill="none" stroke="#2384ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><rect height="11" rx="2" width="12" x="2" y="6"></rect><path d="M14 9h4l4 4v4h-8"></path><circle cx="7" cy="19" r="2"></circle><circle cx="18" cy="19" r="2"></circle></svg> Iniciar viaje</h2><p class="note">Registra la carga ahora. Completarás la descarga más tarde.</p><div class="grid">
+<div><label>Fecha de carga</label><input id="jobDate" type="date"/></div><div><label>Cliente</label><input id="jobClient" placeholder="Cliente"/></div>
+<div><label>Lugar de carga</label><input id="jobLoad" list="places" placeholder="Origen"/></div><div><label>Destino previsto (opcional)</label><input id="jobUnload" list="places" placeholder="Destino"/></div>
+<div><label>Km en carga</label><input id="jobKmStart" inputmode="numeric" min="0" step="1" type="number"/></div><div><label>Kilos en carga</label><input id="jobWeightStart" inputmode="decimal" min="0" step="0.01" type="number"/></div>
 </div><label>Observaciones</label><textarea id="jobNotes" placeholder="Mercancía, referencia..."></textarea><button class="primary" onclick="addJob()">Iniciar viaje</button></div>
-<div class="card" id="finishCard"><h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#2384ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4m0 1c5-4 9 4 15 0v11c-6 4-10-4-15 0"/></svg> Finalizar viaje</h2><label>Selecciona un viaje en curso</label><select id="finishJob" onchange="showFinishJob()"></select><p id="finishInfo" class="note"></p><div class="grid">
-<div><label>Fecha de descarga</label><input id="finishDate" type="date"></div><div><label>Lugar de descarga</label><input id="finishUnload" list="places"></div>
-<div><label>Km en descarga</label><input id="finishKm" type="number" min="0" step="1" inputmode="numeric"></div><div><label>Kilos en descarga</label><input id="finishWeight" type="number" min="0" step="0.01" inputmode="decimal"></div>
+<div class="card" id="finishCard"><h2><svg aria-hidden="true" class="section-icon" fill="none" stroke="#2384ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M5 21V4m0 1c5-4 9 4 15 0v11c-6 4-10-4-15 0"></path></svg> Finalizar viaje</h2><label>Selecciona un viaje en curso</label><select id="finishJob" onchange="showFinishJob()"></select><p class="note" id="finishInfo"></p><div class="grid">
+<div><label>Fecha de descarga</label><input id="finishDate" type="date"/></div><div><label>Lugar de descarga</label><input id="finishUnload" list="places"/></div>
+<div><label>Km en descarga</label><input id="finishKm" inputmode="numeric" min="0" step="1" type="number"/></div><div><label>Kilos en descarga</label><input id="finishWeight" inputmode="decimal" min="0" step="0.01" type="number"/></div>
 </div><button class="primary" onclick="finishTrip()">Finalizar viaje</button></div>
-
 </section>
-<section id="historial" class="page"><div class="card"><h2>Historial de viajes</h2><p class="note">Consulta y modifica los viajes finalizados.</p><label>Filtrar por mes de descarga</label><input id="historyMonth" type="month" onchange="renderHistory()"><button class="secondary" onclick="historyMonth.value='';renderHistory()">Todos los meses</button></div><div id="historyCards"></div><div hidden><table><tbody id="jobsBody"></tbody></table></div></section>
-<section id="repostajes" class="page">
-  <div class="card">
-    <h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#17a876" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M3 21h14M7 7h6v5H7zM16 9l3 3v6a2 2 0 0 0 4 0v-7l-3-3"/></svg> Nuevo repostaje</h2>
-    <p class="note"><b>Versión consumos Gasoil + AdBlue</b></p>
-    <div class="grid">
-      <div><label>Tipo de repostaje</label><select id="fuelType"><option value="Gasoil">⛽ Gasoil</option><option value="AdBlue">💧 AdBlue</option></select></div>
+
+<section class="page" id="repostajes">
+<div class="card"><div class="toolbar" style="order:-1"><button class="primary" id="dieselTab" onclick="chooseFuel('Gasoil')">⛽ Gasoil</button><button class="secondary" id="adTab" onclick="chooseFuel('AdBlue')">💧 AdBlue</button></div>
+<h2><svg aria-hidden="true" class="section-icon" fill="none" stroke="#17a876" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M3 21h14M7 7h6v5H7zM16 9l3 3v6a2 2 0 0 0 4 0v-7l-3-3"></path></svg> Nuevo repostaje</h2>
+<p class="note">Consumo de lleno a lleno, sin acumulado mensual.</p>
+<div class="grid">
+<div style="display:none"><label>Tipo de repostaje</label><select id="fuelType"><option value="Gasoil">⛽ Gasoil</option><option value="AdBlue">💧 AdBlue</option></select></div>
 <div><label>Depósito lleno</label><select id="fuelFull"><option value="no">No</option><option value="yes">Sí, queda lleno</option></select></div>
-      <div><label>Fecha</label><input type="date" id="fuelDate"></div>
-      <div><label>Gasolinera / lugar</label><input id="fuelPlace" list="fuelPlaces" placeholder="Ej. Repsol Albacete"></div>
-      <div><label>Km del camión</label><input type="number" id="fuelKm" inputmode="decimal"></div>
-      <div><label>Litros</label><input type="number" step="0.01" id="fuelLiters" inputmode="decimal"></div>
-      <div><label>Precio por litro (€)</label><input type="number" step="0.001" id="fuelPrice" inputmode="decimal"></div>
-      <div><label>Importe total (€)</label><input type="number" step="0.01" id="fuelTotal" inputmode="decimal" placeholder="Se calcula solo"></div>
-    </div>
-    <p class="note">Marca Sí solo cuando el depósito quede lleno. Los parciales se suman al siguiente llenado completo, incluso entre meses. El primer lleno sirve de referencia.</p>
+<div><label>Fecha</label><input id="fuelDate" type="date"/></div>
+<div><label>Gasolinera / lugar</label><input id="fuelPlace" list="fuelPlaces" placeholder="Ej. Repsol Albacete"/></div>
+<div><label>Km del camión</label><input id="fuelKm" inputmode="decimal" type="number"/></div>
+<div><label>Litros</label><input id="fuelLiters" inputmode="decimal" step="0.01" type="number"/></div>
+<div><label>Precio por litro (€)</label><input id="fuelPrice" inputmode="decimal" step="0.001" type="number"/></div>
+<div><label>Importe total (€)</label><input id="fuelTotal" inputmode="decimal" placeholder="Se calcula solo" step="0.01" type="number"/></div>
+</div>
+<p class="note">Marca Sí solo cuando el depósito quede lleno. Los parciales se suman al siguiente llenado completo, incluso entre meses. El primer lleno sirve de referencia.</p>
 <div class="toolbar"><button class="primary" onclick="addFuel()">Guardar repostaje</button></div>
-  </div>
-  <div class="card">
-    <h3>Repostajes</h3>
-    <div class="table-wrap"><table><thead><tr><th>Tipo</th><th>Fecha</th><th>Lugar</th><th>Km</th><th>Litros</th><th>Lleno</th><th>Consumo intervalo</th><th>€/L</th><th>Total</th><th></th></tr></thead><tbody id="fuelBody"></tbody></table></div>
-  </div>
+</div>
+<div class="card">
+<h3>Repostajes</h3>
+<div class="table-wrap"><table style="display:none"><thead><tr><th>Tipo</th><th>Fecha</th><th>Lugar</th><th>Km</th><th>Litros</th><th>Lleno</th><th>Consumo intervalo</th><th>€/L</th><th>Total</th><th></th></tr></thead><tbody id="fuelBody"></tbody></table></div>
+</div>
 </section>
-
-<section id="gastos" class="page">
-  <div class="card">
-    <h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#f5a03a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20M6 15h4"/></svg> Nuevo gasto</h2>
-    <div class="grid">
-      <div><label>Fecha</label><input type="date" id="expDate"></div>
-      <div><label>Tipo</label>
-        <select id="expType">
-          <option>Peaje</option><option>Parking</option><option>AdBlue</option><option>Lavado</option>
-          <option>Reparación</option><option>Neumáticos</option><option>Dietas</option><option>ITV</option>
-          <option>Seguro</option><option>Otro</option>
-        </select>
-      </div>
-      <div><label>Lugar</label><input id="expPlace" placeholder="Lugar o proveedor"></div>
-      <div><label>Importe (€)</label><input type="number" step="0.01" id="expAmount" inputmode="decimal"></div>
-    </div>
-    <label>Observaciones</label><textarea id="expNotes"></textarea>
-    <div class="toolbar"><button class="primary" onclick="addExpense()">Guardar gasto</button></div>
-  </div>
-  <div class="card">
-    <h3>Gastos</h3>
-    <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Lugar</th><th>Importe</th><th></th></tr></thead><tbody id="expBody"></tbody></table></div>
-  </div>
+<section class="page" id="gastos">
+<div class="card">
+<h2><svg aria-hidden="true" class="section-icon" fill="none" stroke="#f5a03a" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><rect height="14" rx="3" width="20" x="2" y="5"></rect><path d="M2 10h20M6 15h4"></path></svg> Nuevo gasto</h2>
+<div class="grid">
+<div><label>Fecha</label><input id="expDate" type="date"/></div>
+<div><label>Tipo</label>
+<select id="expType">
+<option>Peaje</option><option>Parking</option><option>AdBlue</option><option>Lavado</option>
+<option>Reparación</option><option>Neumáticos</option><option>Dietas</option><option>ITV</option>
+<option>Seguro</option><option>Otro</option>
+</select>
+</div>
+<div><label>Lugar</label><input id="expPlace" placeholder="Lugar o proveedor"/></div>
+<div><label>Importe (€)</label><input id="expAmount" inputmode="decimal" step="0.01" type="number"/></div>
+</div>
+<label>Observaciones</label><textarea id="expNotes"></textarea>
+<div class="toolbar"><button class="primary" onclick="addExpense()">Guardar gasto</button></div>
+</div>
+<div class="card">
+<h3>Gastos</h3>
+<div class="table-wrap"><table style="display:none"><thead><tr><th>Fecha</th><th>Tipo</th><th>Lugar</th><th>Importe</th><th></th></tr></thead><tbody id="expBody"></tbody></table></div>
+</div>
 </section>
-
-<section id="datos" class="page">
-  <div class="card">
-    <h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#536d95" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v2M3 10h18l-2 11H5z"/></svg> Copia de seguridad</h2>
-    <p class="note">Los datos se guardan en este dispositivo. Exporta una copia periódicamente.</p>
-    <div class="toolbar">
-      <button class="primary" onclick="exportJSON()">Exportar copia</button>
-      <label class="btn secondary" style="display:inline-block">Importar copia<input type="file" id="importFile" accept=".json" hidden onchange="importJSON(event)"></label>
-      <button class="secondary" onclick="exportCSV()">Exportar CSV</button>
-    </div>
-    <hr>
-    <button class="danger" onclick="clearAll()">Borrar todos los datos</button>
-  </div>
-  <div class="card">
-    <h3>Lugares guardados</h3>
-    <p class="note">Se guardan automáticamente cuando introduces cargas, descargas o gasolineras.</p>
-    <div id="savedPlaces"></div>
-  </div>
+<section class="page" id="datos">
+<div class="card">
+<h2><svg aria-hidden="true" class="section-icon" fill="none" stroke="#536d95" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v2M3 10h18l-2 11H5z"></path></svg> Copia de seguridad</h2>
+<p class="note">Los datos se guardan en este dispositivo. Exporta una copia periódicamente.</p>
+<div class="toolbar">
+<button class="primary" onclick="exportJSON()">Exportar copia</button>
+<label class="btn secondary" style="display:inline-block">Importar copia<input accept=".json" hidden="" id="importFile" onchange="importJSON(event)" type="file"/></label>
+<button class="secondary" onclick="exportCSV()">Exportar CSV</button>
+</div>
+<hr/>
+<button class="danger" onclick="clearAll()">Borrar todos los datos</button>
+</div>
+<div class="card">
+<h3>Lugares guardados</h3>
+<p class="note">Se guardan automáticamente cuando introduces cargas, descargas o gasolineras.</p>
+<div id="savedPlaces"></div>
+</div>
 </section>
-
-<section id="archivo" class="page"><div class="card"><h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#8955ed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14v18l-3-2-4 2-4-2-3 2zM9 8h6M9 12h6M9 16h4"/></svg> Factura única del mes</h2><p class="note">Registra la base sin IVA para calcular el precio por km. Adjunta aquí tu factura existente (PDF o foto). Los cobros se registran por separado.</p><div class="grid"><div><label>Mes de los trabajos</label><input id="invoiceMonth" type="month"></div><div><label>Número de factura</label><input id="invoiceNumber" placeholder="Ej. F-09/2026"></div><div><label>Fecha de factura</label><input id="invoiceDate" type="date"></div><div><label>Base imponible (€), sin IVA</label><input id="invoiceBase" type="number" min="0" step="0.01" inputmode="decimal"></div><div><label>IVA (€), si corresponde</label><input id="invoiceVat" type="number" min="0" step="0.01" inputmode="decimal"></div><div><label>Total factura (€)</label><input id="invoiceTotal" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Se calcula si se deja vacío"></div><div><label>Fecha de cobro (opcional)</label><input id="invoicePaidDate" type="date"></div><div><label>Importe cobrado (€)</label><input id="invoicePaid" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0 si está pendiente"></div></div><label>Adjuntar factura existente (PDF o foto)</label><input id="invoiceFile" type="file" accept="application/pdf,image/*"><div class="toolbar"><button class="primary" onclick="saveInvoice()">Guardar factura mensual</button></div><p id="invoiceInfo" class="note"></p><div id="invoiceHistory"></div></div><div class="card"><h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#8955ed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 11-9.5 9.5a6 6 0 0 1-8.5-8.5L13 2a4 4 0 0 1 5.7 5.7l-10 10a2 2 0 0 1-2.8-2.8L15 6"/></svg> Fotografías y documentos</h2><p class="note">Selecciona un trabajo, repostaje o gasto ya guardado. Puedes adjuntar fotos, albaranes, facturas existentes y PDF.</p><label>Registro</label><select id="docRecord"></select><label>Clase de documento</label><select id="docType"><option>Foto del trabajo</option><option>Albarán</option><option>Factura</option><option>Ticket</option><option>Otro</option></select><label>Fotos o archivos (puedes seleccionar varios)</label><input type="file" id="docFiles" accept="image/*,application/pdf" multiple>
-<label>Escanear documento (recorte automático tras la foto)</label><input type="file" id="scanFiles" accept="image/*" capture="environment" multiple onchange="scanToPDF()">
+<section class="page" id="factura"><div class="card"><h2><svg aria-hidden="true" class="section-icon" fill="none" stroke="#8955ed" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M5 3h14v18l-3-2-4 2-4-2-3 2zM9 8h6M9 12h6M9 16h4"></path></svg> Factura única del mes</h2><p class="note">Registra la base sin IVA para calcular el precio por km. Adjunta aquí tu factura existente (PDF o foto). Los cobros se registran por separado.</p><div class="grid"><div><label>Base al 10 % (€)</label><input id="base10" min="0" oninput="vatCalc()" step="0.01" type="number"/></div><div><label>Base al 21 % (€)</label><input id="base21" min="0" oninput="vatCalc()" step="0.01" type="number"/></div></div><div class="grid"><div><label>Mes de los trabajos</label><input id="invoiceMonth" type="month"/></div><div><label>Número de factura</label><input id="invoiceNumber" placeholder="Ej. F-09/2026"/></div><div><label>Fecha de factura</label><input id="invoiceDate" type="date"/></div><div><label>Base imponible (€), sin IVA</label><input id="invoiceBase" inputmode="decimal" min="0" readonly="readonly" step="0.01" type="number"/></div><div><label>IVA (€), si corresponde</label><input id="invoiceVat" inputmode="decimal" min="0" readonly="readonly" step="0.01" type="number"/></div><div><label>Total factura (€)</label><input id="invoiceTotal" inputmode="decimal" min="0" placeholder="Se calcula si se deja vacío" readonly="readonly" step="0.01" type="number"/></div><div><label>Fecha de cobro (opcional)</label><input id="invoicePaidDate" type="date"/></div><div><label>Importe cobrado (€)</label><input id="invoicePaid" inputmode="decimal" min="0" placeholder="0 si está pendiente" step="0.01" type="number"/></div></div><label>Adjuntar factura existente (PDF o foto)</label><input accept="application/pdf,image/*" id="invoiceFile" type="file"/><div class="toolbar"><button class="primary" onclick="saveInvoice()">Guardar factura mensual</button></div><p class="note" id="invoiceInfo"></p><div hidden="hidden" id="invoiceHistory"></div><p class="note" id="vatBreak"></p><button class="secondary" onclick="printInvoiceSummary()">Imprimir resumen de factura</button></div><div class="card"><h2><svg aria-hidden="true" class="section-icon" fill="none" stroke="#8955ed" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"></path></svg> Cierre mensual</h2><label>Mes a imprimir</label><input id="reportMonth" type="month"/><p class="note">Genera un único PDF con el resumen mensual y, al final, los PDF adjuntos vinculados a los registros del mes. Las fotografías también se incluyen como anexos.</p><button class="primary" onclick="printMonthly()">Abrir informe mensual</button></div></section><section class="page" id="archivo"><section class="" hidden="hidden" id="historial"><div class="card"><h2>Historial de viajes</h2><p class="note">Consulta y modifica los viajes finalizados.</p><label>Filtrar por mes de descarga</label><input id="historyMonth" onchange="renderHistory()" type="month"/><button class="secondary" onclick="historyMonth.value='';renderHistory()">Todos los meses</button></div><div id="historyCards"></div><div hidden=""><table style="display:none"><tbody id="jobsBody"></tbody></table></div></section><div class="card" style="display:none"><h2><svg aria-hidden="true" class="section-icon" fill="none" stroke="#8955ed" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="m21 11-9.5 9.5a6 6 0 0 1-8.5-8.5L13 2a4 4 0 0 1 5.7 5.7l-10 10a2 2 0 0 1-2.8-2.8L15 6"></path></svg> Fotografías y documentos</h2><p class="note">Selecciona un trabajo, repostaje o gasto ya guardado. Puedes adjuntar fotos, albaranes, facturas existentes y PDF.</p><label>Registro</label><select id="docRecord"></select><label>Clase de documento</label><select id="docType"><option>Foto del trabajo</option><option>Albarán</option><option>Factura</option><option>Ticket</option><option>Otro</option></select><label>Fotos o archivos (puedes seleccionar varios)</label><input accept="image/*,application/pdf" id="docFiles" multiple="" type="file"/>
+<label>Escanear documento (recorte automático tras la foto)</label><input accept="image/*" capture="environment" id="scanFiles" multiple="" onchange="scanToPDF()" type="file"/>
 <div class="toolbar"><button class="primary" onclick="addDocuments()">Adjuntar documentos</button><button class="secondary" onclick="scanToPDF()">✂️ Hacer foto y recortar</button></div>
-<p class="note">Puedes usar una o varias imágenes. Bismatrans las unirá en un único PDF.</p><p class="note" id="docStatus"></p><h3>Documentos guardados</h3><div id="docList"></div></div><div class="card" style="display:none"><h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#8955ed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M15 5a6 6 0 1 1-6 10M9 6v6m-2-4h4"/></svg> Cobros y pagos</h2><label>Trabajo relacionado</label><select id="paymentJob"></select><div class="grid"><div><label>Fecha de cobro</label><input type="date" id="paymentDate"></div><div><label>Importe cobrado (€)</label><input type="number" step="0.01" id="paymentAmount"></div></div><label>Referencia / observaciones</label><input id="paymentNote"><div class="toolbar"><button class="primary" onclick="addPayment()">Guardar cobro</button></div><div id="paymentList"></div></div><div class="card"><h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#8955ed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg> Cierre mensual</h2><label>Mes a imprimir</label><input type="month" id="reportMonth"><p class="note">Genera un único PDF con el resumen mensual y, al final, los PDF adjuntos vinculados a los registros del mes. Las fotografías también se incluyen como anexos.</p><button class="primary" onclick="printMonthly()">Abrir informe mensual</button></div></section>
+<p class="note">Puedes usar una o varias imágenes. Bismatrans las unirá en un único PDF.</p><p class="note" id="docStatus"></p><h3>Documentos guardados</h3><div id="docList"></div></div><div class="card" style="display:none"><h2><svg aria-hidden="true" class="section-icon" fill="none" stroke="#8955ed" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><circle cx="9" cy="9" r="6"></circle><path d="M15 5a6 6 0 1 1-6 10M9 6v6m-2-4h4"></path></svg> Cobros y pagos</h2><label>Trabajo relacionado</label><select id="paymentJob"></select><div class="grid"><div><label>Fecha de cobro</label><input id="paymentDate" type="date"/></div><div><label>Importe cobrado (€)</label><input id="paymentAmount" step="0.01" type="number"/></div></div><label>Referencia / observaciones</label><input id="paymentNote"/><div class="toolbar"><button class="primary" onclick="addPayment()">Guardar cobro</button></div><div id="paymentList"></div></div><div class="card"><h2>Archivo mensual</h2><label>Mes</label><input id="archiveMonth" type="month"/><div id="archiveFolders"></div><div id="archiveRecords"></div></div></section>
 <datalist id="places"></datalist>
 <datalist id="fuelPlaces"></datalist>
 </main>
-
-
-<div id="cropModal" aria-hidden="true">
-  <div id="cropTop"><b>✂️ Ajustar documento</b><br><span id="cropCounter" style="font-size:12px">Mueve las esquinas hasta los bordes del ticket o albarán.</span></div>
-  <div id="cropStage"><canvas id="cropCanvas"></canvas></div>
-  <div id="cropActions">
-    <div class="toolbar">
-      <button class="secondary" type="button" onclick="resetCrop()">↺ Restablecer</button>
-      <button class="primary" type="button" onclick="acceptCrop()">✓ Usar recorte</button>
-      <button class="danger" type="button" onclick="cancelCrop()">Cancelar</button>
-    </div>
-    <p class="note" style="text-align:center;margin:7px 0 0">Arrastra los 4 círculos hasta las esquinas del documento.</p>
-  </div>
+<div aria-hidden="true" id="cropModal">
+<div id="cropTop"><b>✂️ Ajustar documento</b><br/><span id="cropCounter" style="font-size:12px">Mueve las esquinas hasta los bordes del ticket o albarán.</span></div>
+<div id="cropStage"><canvas id="cropCanvas"></canvas></div>
+<div id="cropActions">
+<div class="toolbar">
+<button class="secondary" onclick="resetCrop()" type="button">↺ Restablecer</button>
+<button class="primary" onclick="acceptCrop()" type="button">✓ Usar recorte</button>
+<button class="danger" onclick="cancelCrop()" type="button">Cancelar</button>
 </div>
-
-<div id="tripSheet" class="trip-sheet" role="dialog" aria-modal="true" aria-label="Viaje en curso"><div class="trip-panel"><div class="trip-handle"></div><div class="toolbar" style="justify-content:flex-end"><button class="secondary" onclick="closeTripSheet()">Cerrar ×</button></div><div id="tripMenu" class="trip-menu"><h2>Viaje en curso</h2><button onclick="editActiveTrip()">✎　Modificar viaje</button><button onclick="tripDocuments(false)">▤　Documentos</button><button onclick="tripDocuments(true)">▣　Escanear albarán</button><button onclick="tripMap()">↗　Ruta en Maps</button><button onclick="finishActiveTrip()">⚑　Finalizar viaje</button></div><div id="tripEdit" hidden><h2>Modificar viaje</h2><div class="grid"><div><label>Fecha de carga</label><input id="editDate" type="date"></div><div><label>Cliente</label><input id="editClient"></div><div><label>Origen</label><input id="editLoad" list="places"></div><div><label>Destino previsto</label><input id="editUnload" list="places"></div><div><label>Km iniciales</label><input id="editKm" type="number" min="0" step="1"></div><div><label>Kilos en carga</label><input id="editWeight" type="number" min="0" step="0.01"></div></div><label>Observaciones / incidencias</label><textarea id="editNotes"></textarea><div class="toolbar"><button class="primary" onclick="saveActiveTrip()">Guardar cambios</button><button class="secondary" onclick="closeTripSheet()">Cancelar</button></div></div></div></div>
-<div id="historySheet" class="trip-sheet" role="dialog" aria-modal="true" aria-label="Modificar viaje finalizado"><div class="trip-panel"><div class="trip-handle"></div><h2>Modificar viaje finalizado</h2><div class="grid"><div><label for="histDate">Fecha de carga</label><input id="histDate" type="date"></div><div><label for="histEndDate">Fecha de descarga</label><input id="histEndDate" type="date"></div><div><label for="histClient">Cliente</label><input id="histClient" type="text"></div><div><label for="histLoad">Origen</label><input id="histLoad" type="text" list="places"></div><div><label for="histUnload">Destino</label><input id="histUnload" type="text" list="places"></div><div><label for="histKm">Km iniciales</label><input id="histKm" type="number" min="0" step="any"></div><div><label for="histEndKm">Km finales</label><input id="histEndKm" type="number" min="0" step="any"></div><div><label for="histWeight">Kilos en carga</label><input id="histWeight" type="number" min="0" step="any"></div><div><label for="histEndWeight">Kilos en descarga</label><input id="histEndWeight" type="number" min="0" step="any"></div><div><label for="histEmpty">Km en vacío anterior</label><input id="histEmpty" type="number" min="0" step="any"></div></div><label for="histNotes">Observaciones</label><textarea id="histNotes"></textarea><p class="note">Revisa los kilómetros en vacío si corriges el kilometraje. Los documentos seguirán vinculados al mismo viaje.</p><div class="toolbar"><button class="primary" onclick="saveHistoryEdit()">Guardar cambios</button><button class="secondary" onclick="closeHistory()">Cancelar</button></div></div></div>
-<nav class="tabs" aria-label="Navegación principal">
-  <button class="active" onclick="showPage('inicio',this)"><svg viewBox="0 0 24 24" fill="none" stroke="#1677f9" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Inicio</span></button>
-  <button onclick="showPage('trabajos',this)"><svg viewBox="0 0 24 24" fill="none" stroke="#2384ff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="12" height="11" rx="2"/><path d="M14 9h4l4 4v4h-8M5 17v2m13-2v2"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg><span>Trabajos</span></button>
-  <button onclick="showPage('historial',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg><span>Historial</span></button>
-  <button onclick="showPage('repostajes',this)"><svg viewBox="0 0 24 24" fill="none" stroke="#17a876" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M3 21h14M7 7h6v5H7zM16 9l3 3v6a2 2 0 0 0 4 0v-7l-3-3"/></svg><span>Repostajes</span></button>
-  <button onclick="showPage('gastos',this)"><svg viewBox="0 0 24 24" fill="none" stroke="#f5a03a" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20M6 15h4"/></svg><span>Gastos</span></button>
-  <button onclick="showPage('archivo',this)"><svg viewBox="0 0 24 24" fill="none" stroke="#8955ed" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM14 3v6h5M9 14h7M9 18h7"/></svg><span>Archivo</span></button>
-  <button onclick="showPage('datos',this)"><svg viewBox="0 0 24 24" fill="none" stroke="#536d95" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v2M3 10h18l-2 11H5z"/></svg><span>Datos</span></button>
+<p class="note" style="text-align:center;margin:7px 0 0">Arrastra los 4 círculos hasta las esquinas del documento.</p>
+</div>
+</div>
+<div aria-label="Viaje en curso" aria-modal="true" class="trip-sheet" id="tripSheet" role="dialog"><div class="trip-panel"><div class="trip-handle"></div><div class="toolbar" style="justify-content:flex-end"><button class="secondary" onclick="closeTripSheet()">Cerrar ×</button></div><div class="trip-menu" id="tripMenu"><h2>Viaje en curso</h2><button onclick="editActiveTrip()">✎　Modificar viaje</button><button onclick="tripDocuments(false)">▤　Documentos</button><button onclick="tripDocuments(true)">▣　Escanear albarán</button><button onclick="tripMap()">↗　Ruta en Maps</button><button onclick="finishActiveTrip()">⚑　Finalizar viaje</button></div><div hidden="" id="tripEdit"><h2>Modificar viaje</h2><div class="grid"><div><label>Fecha de carga</label><input id="editDate" type="date"/></div><div><label>Cliente</label><input id="editClient"/></div><div><label>Origen</label><input id="editLoad" list="places"/></div><div><label>Destino previsto</label><input id="editUnload" list="places"/></div><div><label>Km iniciales</label><input id="editKm" min="0" step="1" type="number"/></div><div><label>Kilos en carga</label><input id="editWeight" min="0" step="0.01" type="number"/></div></div><label>Observaciones / incidencias</label><textarea id="editNotes"></textarea><div class="toolbar"><button class="primary" onclick="saveActiveTrip()">Guardar cambios</button><button class="secondary" onclick="closeTripSheet()">Cancelar</button></div></div></div></div>
+<div aria-label="Modificar viaje finalizado" aria-modal="true" class="trip-sheet" id="historySheet" role="dialog"><div class="trip-panel"><div class="trip-handle"></div><h2>Modificar viaje finalizado</h2><div class="grid"><div><label for="histDate">Fecha de carga</label><input id="histDate" type="date"/></div><div><label for="histEndDate">Fecha de descarga</label><input id="histEndDate" type="date"/></div><div><label for="histClient">Cliente</label><input id="histClient" type="text"/></div><div><label for="histLoad">Origen</label><input id="histLoad" list="places" type="text"/></div><div><label for="histUnload">Destino</label><input id="histUnload" list="places" type="text"/></div><div><label for="histKm">Km iniciales</label><input id="histKm" min="0" step="any" type="number"/></div><div><label for="histEndKm">Km finales</label><input id="histEndKm" min="0" step="any" type="number"/></div><div><label for="histWeight">Kilos en carga</label><input id="histWeight" min="0" step="any" type="number"/></div><div><label for="histEndWeight">Kilos en descarga</label><input id="histEndWeight" min="0" step="any" type="number"/></div><div><label for="histEmpty">Km en vacío anterior</label><input id="histEmpty" min="0" step="any" type="number"/></div></div><label for="histNotes">Observaciones</label><textarea id="histNotes"></textarea><p class="note">Revisa los kilómetros en vacío si corriges el kilometraje. Los documentos seguirán vinculados al mismo viaje.</p><div class="toolbar"><button class="primary" onclick="saveHistoryEdit()">Guardar cambios</button><button class="secondary" onclick="closeHistory()">Cancelar</button></div></div></div>
+<nav aria-label="Navegación principal" class="tabs">
+<button class="active" onclick="showPage('inicio',this)"><svg aria-hidden="true" fill="none" stroke="#1677f9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1" viewbox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></svg><span>Inicio</span></button>
+<button onclick="showPage('trabajos',this)"><svg aria-hidden="true" fill="none" stroke="#2384ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1" viewbox="0 0 24 24"><rect height="11" rx="2" width="12" x="2" y="6"></rect><path d="M14 9h4l4 4v4h-8M5 17v2m13-2v2"></path><circle cx="7" cy="19" r="2"></circle><circle cx="18" cy="19" r="2"></circle></svg><span>Trabajos</span></button>
+<button onclick="showPage('factura',this)"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l4 2"></path></svg><span>Factura</span></button>
+<button onclick="showPage('repostajes',this)"><svg aria-hidden="true" fill="none" stroke="#17a876" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1" viewbox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M3 21h14M7 7h6v5H7zM16 9l3 3v6a2 2 0 0 0 4 0v-7l-3-3"></path></svg><span>Repostajes</span></button>
+<button onclick="showPage('gastos',this)"><svg aria-hidden="true" fill="none" stroke="#f5a03a" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1" viewbox="0 0 24 24"><rect height="14" rx="3" width="20" x="2" y="5"></rect><path d="M2 10h20M6 15h4"></path></svg><span>Gastos</span></button>
+<button onclick="showPage('archivo',this)"><svg aria-hidden="true" fill="none" stroke="#8955ed" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1" viewbox="0 0 24 24"><path d="M7 3h7l5 5v13H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM14 3v6h5M9 14h7M9 18h7"></path></svg><span>Archivo</span></button>
+<button onclick="showPage('datos',this)"><svg aria-hidden="true" fill="none" stroke="#536d95" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1" viewbox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v2M3 10h18l-2 11H5z"></path></svg><span>Datos</span></button>
 </nav>
-
 <script>
 const KEY='controlCamion_v1';
 let db = JSON.parse(localStorage.getItem(KEY) || '{"jobs":[],"fuel":[],"expenses":[],"places":[],"fuelPlaces":[]}');
@@ -605,5 +593,28 @@ function deleteHistory(i){const j=historyJobs()[i];if(j)del('jobs',j.id);}
 historySheet.addEventListener('click',e=>{if(e.target===historySheet)closeHistory()});
 const historyBaseRender=render;render=function(){historyBaseRender();renderHistory();};renderHistory();
 </script>
-</body>
+<dialog id="recordDialog" style="width:92%;max-width:480px;border:0;border-radius:18px;padding:20px"><div id="recordFields"></div><div class="toolbar"><button class="primary" onclick="saveRecordEdit()">Guardar</button><button class="secondary" onclick="recordDialog.close()">Cancelar</button></div></dialog><dialog id="directDocs" style="width:92%;max-width:480px;border:0;border-radius:18px;padding:20px"><h2>Documentos del registro</h2><div id="directList"></div><button class="primary" onclick="scanFiles.click()">Escanear</button><button class="secondary" onclick="docFiles.click()">Adjuntar</button><p id="directStatus"></p><button class="secondary" onclick="directDocs.close()">Cerrar</button></dialog><script>
+let archiveKind='', editRecord=null, directId=null;
+archiveMonth.value=today().slice(0,7); archiveMonth.onchange=()=>{archiveKind='';drawArchive()};
+function chooseFuel(t){fuelType.value=t;document.getElementById('fuelType').value=t;dieselTab.className=t==='Gasoil'?'primary':'secondary';adTab.className=t==='AdBlue'?'primary':'secondary'}
+// fuelType is also an existing function; use explicit element lookup.
+chooseFuel=function(t){document.getElementById('fuelType').value=t;dieselTab.className=t==='Gasoil'?'primary':'secondary';adTab.className=t==='AdBlue'?'primary':'secondary'};
+function drawArchive(){const m=archiveMonth.value;archiveFolders.innerHTML=['Viajes','Gasoil','AdBlue','Gastos','Factura','Documentación','Informe'].map(k=>`<button class="${archiveKind===k?'primary':'secondary'}" style="margin:4px" onclick="archiveKind='${k}';drawArchive()">📁 ${k}</button>`).join('');historyMonth.value=m;document.getElementById('historial').hidden=archiveKind!=='Viajes';renderHistory();document.getElementById('archivo').append(document.getElementById('historial'));archiveRecords.innerHTML='';if(archiveKind==='Viajes'){archiveRecords.append(document.getElementById('historial'));return}document.getElementById('archivo').append(document.getElementById('historial'));if(archiveKind==='Factura'||archiveKind==='Informe'){archiveRecords.innerHTML='<button class="primary" onclick="openMonthInvoice()">Abrir '+archiveKind+'</button>';return}if(archiveKind==='Documentación'){showMonthDocs();return}const kind=archiveKind==='Gastos'?'expenses':'fuel';if(!archiveKind)return;const rows=db[kind].filter(x=>String(x.date).startsWith(m)&&(kind==='expenses'||fuelType(x)===archiveKind)).sort((a,b)=>b.date.localeCompare(a.date));archiveRecords.innerHTML=rows.map(x=>{const c=kind==='fuel'?consumptionFor(x):null;return `<details class="card"><summary><b>${esc(x.place||x.type||archiveKind)}</b> · ${esc(x.date)}<br>${kind==='fuel'?n(x.liters,2)+' L · '+(isFull(x)?'Lleno':'Parcial')+(c===null?'':' · '+n(c,2)+' L/100 km'):money(x.amount)}</summary><p>${kind==='fuel'?n(x.km)+' km · '+money(x.total):esc(x.notes||'')}</p><button class="primary" onclick="editArchiveRecord('${kind}','${esc(x.id)}')">Modificar</button> <button class="secondary" onclick="openDirectDocs('${esc(x.id)}')">Documentos</button> <button class="danger" onclick="del('${kind}','${esc(x.id)}')">Eliminar</button></details>`}).join('')||'<p>Sin registros.</p>'}
+function openMonthInvoice(){invoiceMonth.value=archiveMonth.value;reportMonth.value=archiveMonth.value;goTripPage('factura');showInvoice();if(archiveKind==='Informe')printMonthly()}
+async function showMonthDocs(){const m=archiveMonth.value,ids=new Set([...db.jobs.filter(x=>String(x.finishDate||x.date).startsWith(m)),...db.fuel.filter(x=>x.date.startsWith(m)),...db.expenses.filter(x=>x.date.startsWith(m))].map(x=>x.id));ids.add('invoice:'+m);const ds=(await allDocs()).filter(x=>ids.has(x.recordId)||(!recordOptions().some(r=>r.id===x.recordId)&&String(x.date).startsWith(m)));if(archiveKind==='Documentación'&&archiveMonth.value===m)archiveRecords.innerHTML=ds.map(docRow).join('')||'Sin documentos.'}
+function docRow(d){return `<p>${esc(d.name)} <button class="secondary" onclick="viewDocument('${esc(d.id)}')">Ver</button> <button class="secondary" onclick="shareDocument('${esc(d.id)}')">Compartir</button> <button class="danger" onclick="removeDocument('${esc(d.id)}')">Eliminar</button></p>`}
+function openDirectDocs(rid){directId=rid;docRecord.value=rid;docType.value=db.jobs.some(j=>j.id===rid)?'Albarán':'Ticket';directStatus.textContent='';directDocs.showModal();refreshDirect()}
+async function refreshDirect(){if(directId)directList.innerHTML=(await allDocs()).filter(d=>d.recordId===directId).map(docRow).join('')||'Sin documentos.'}
+docFiles.onchange=async()=>{if(directDocs.open){docRecord.value=directId;await addDocuments();directStatus.textContent=docStatus.textContent;refreshDirect()}};
+// close native dialog during crop, which uses existing full-screen overlay
+scanFiles.onchange=async()=>{const was=directDocs.open;if(was){docRecord.value=directId;directDocs.close()}await scanToPDF();if(was){directDocs.showModal();directStatus.textContent=docStatus.textContent;refreshDirect()}};
+historyDocs=function(i){const j=historyJobs()[i];if(j)openDirectDocs(j.id)};tripDocuments=function(scan){const j=tripById();if(!j)return;closeTripSheet();openDirectDocs(j.id);if(scan)scanFiles.click()};
+function editArchiveRecord(k,rid){const x=db[k].find(r=>r.id===rid);if(!x)return;editRecord={k,x};const fields=k==='fuel'?[['date','Fecha','date'],['place','Lugar','text'],['km','Km','number'],['liters','Litros','number'],['price','Precio/litro','number'],['total','Importe','number']]:[['date','Fecha','date'],['type','Concepto','text'],['place','Lugar','text'],['amount','Importe','number'],['notes','Observaciones','text']];recordFields.innerHTML=fields.map(([key,label,type])=>`<label>${label}</label><input data-field="${key}" type="${type}" step="any" value="${esc(x[key]??'')}">`).join('')+(k==='fuel'?`<label>Depósito lleno</label><select data-field="fullTank"><option value="no">No</option><option value="yes" ${isFull(x)?'selected':''}>Sí</option></select>`:'');recordDialog.showModal()}
+function saveRecordEdit(){const {k,x}=editRecord;const v={};recordFields.querySelectorAll('[data-field]').forEach(e=>v[e.dataset.field]=e.type==='number'?Number(e.value):e.value);if(!v.date||Object.values(v).some(y=>typeof y==='number'&&(!Number.isFinite(y)||y<0))||(k==='fuel'&&!(v.km>0&&v.liters>0)))return alert('Comprueba los datos.');if(k==='fuel')v.fullTank=v.fullTank==='yes';Object.assign(x,v);save();recordDialog.close()}
+function vatCalc(){const a=Number(base10.value)||0,b=Number(base21.value)||0;const r=x=>Math.round((x+Number.EPSILON)*100)/100;invoiceBase.value=r(a+b);invoiceVat.value=r(r(a*.1)+r(b*.21));invoiceTotal.value=r(+invoiceBase.value + +invoiceVat.value);vatBreak.textContent='IVA 10 %: '+money(r(a*.1))+' · IVA 21 %: '+money(r(b*.21))}
+const oldShowInvoice=showInvoice;showInvoice=function(){oldShowInvoice();const x=(db.invoices||[]).find(i=>i.month===invoiceMonth.value);base10.value=x?.base10??'';base21.value=x?.base21??'';vatBreak.textContent=x&&x.base10===undefined?'Factura anterior: introduce el reparto de bases solo si deseas modificarla.':'';if(x?.base10!==undefined)vatCalc()};invoiceMonth.removeEventListener('change',oldShowInvoice);invoiceMonth.addEventListener('change',showInvoice);
+const oldSaveInvoice=saveInvoice;saveInvoice=async function(){if(base10.value!==''||base21.value!==''){if(+base10.value<0||+base21.value<0)return alert('Bases no válidas');vatCalc();const m=invoiceMonth.value,a=+base10.value||0,b=+base21.value||0;const old=(db.invoices||[]).find(i=>i.month===m);const snapshot=old?JSON.stringify(old):null;await oldSaveInvoice();const x=(db.invoices||[]).find(i=>i.month===m);if(x&&(!old||JSON.stringify(x)!==snapshot||(+x.base===a+b&&+x.vat===+invoiceVat.value))){x.base10=a;x.base21=b;save();showInvoice()}}else await oldSaveInvoice()};
+function printInvoiceSummary(){const x=(db.invoices||[]).find(i=>i.month===invoiceMonth.value);if(!x)return alert('Guarda primero la factura.');const w=window.open('','_blank');if(!w)return;w.document.write('<h1>Bismatrans, S.L. · Resumen de factura</h1><p>'+esc(x.number)+' · '+esc(x.month)+'</p>'+ (x.base10===undefined?'': '<p>Base 10 %: '+money(x.base10)+' · IVA: '+money(x.base10*.1)+'</p><p>Base 21 %: '+money(x.base21)+' · IVA: '+money(x.base21*.21)+'</p>')+'<p>Base total: '+money(x.base)+'</p><p>IVA: '+money(x.vat)+'</p><h2>Total: '+money(x.total)+'</h2><p>Resumen interno, no sustituye la factura fiscal.</p><button onclick="print()">Imprimir / PDF</button>');w.document.close()}
+const finalRender=render;render=function(){finalRender();drawArchive()};const oldArchive=renderArchive;renderArchive=async function(){await oldArchive();refreshDirect();if(archiveKind==='Documentación')showMonthDocs()};showInvoice();drawArchive();
+</script></body>
 </html>
