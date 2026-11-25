@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#ffffff" />
+<meta name="theme-color" content="#397ba9" />
 <title>Bismatrans,S.L</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -115,6 +115,10 @@ header h1{color:#fff;font-family:"Sergy Trendi","SergyTrendi","Trebuchet MS",ui-
 @media(max-width:370px){header h1{font-size:21px}.tabs svg{width:23px;height:23px}}
 
 .section-icon{width:27px;height:27px;vertical-align:-6px;display:inline-block;margin-right:5px;flex-shrink:0}
+
+:root{--bg:#d8ecfa;--text:#203040;--muted:#536777;--accent:#397ba9;--accent2:#28648e;--line:#dbe6ed;--good:#18852b}
+body{background:linear-gradient(155deg,#e5f3fc,#bcdcf1);min-height:100dvh;color:var(--text)}
+header{background:#397ba9;border-radius:0;box-shadow:none}header h1{font-weight:650;font-size:23px}.card{border:0;border-radius:18px;box-shadow:0 4px 15px #245b7820}.card h2,.card h3{color:#234b69;font-weight:650}.kpi{background:#f4f9fc}.kpi b{color:#28648e}button,.btn{font-weight:600}.primary{background:#397ba9}.tabs{background:#397ba9;gap:0;border:0}.tabs button{color:#fff;font-size:10px}.tabs button svg{stroke:currentColor;filter:none}.tabs button.active{background:#ffffff30;color:white}.trip-card{border-top:5px solid #239437;padding:16px}.trip-route{border-left:3px solid #239437;margin:16px 0 16px 8px;padding-left:16px;display:grid;gap:14px}.trip-route strong{display:block;font-size:19px}.trip-route small{color:var(--muted)}.trip-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.trip-actions button{min-height:44px}.trip-round{border:1px solid #b9c9d3;background:white;color:#234b69;border-radius:50%;width:44px;padding:0;font-size:20px}.trip-finish{margin-left:auto;background:#18852b;color:white;border-radius:30px}.trip-tag{display:inline-block;background:#e6f5e8;color:#16752a;border-radius:30px;padding:6px 12px;font-size:13px}.trip-sheet{position:fixed;inset:0;background:#142c4666;z-index:100;display:none;align-items:flex-end}.trip-sheet.open{display:flex}.trip-panel{background:white;border-radius:24px 24px 0 0;width:100%;max-height:88dvh;overflow:auto;padding:18px 20px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px #0002}.trip-panel h2{font-size:20px;margin:12px 0}.trip-handle{width:40px;height:4px;border-radius:5px;background:#b7c1c9;margin:auto}.trip-menu button{display:block;width:100%;text-align:left;background:white;color:#203040;padding:16px 8px;border-bottom:1px solid #edf1f4;border-radius:0}.trip-menu button:last-child{color:#18852b}.trip-panel .toolbar button{flex:1}.trip-panel input,.trip-panel textarea{color:#203040}.trip-metrics{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;margin-bottom:15px}.trip-metrics b{display:block;font-size:16px}.trip-heading{font-size:18px;color:#234b69;margin:0 0 12px}.trip-panel [hidden]{display:none!important}#finishCard{scroll-margin-top:100px}
 </style>
 </head>
 <body>
@@ -124,6 +128,7 @@ header h1{color:#fff;font-family:"Sergy Trendi","SergyTrendi","Trebuchet MS",ui-
 
 <main>
 <section id="inicio" class="page active">
+<div id="activeTripsHome"></div>
   <div class="card">
     <h2>Resumen del mes</h2>
     <div class="grid grid-4">
@@ -156,12 +161,13 @@ header h1{color:#fff;font-family:"Sergy Trendi","SergyTrendi","Trebuchet MS",ui-
 </section>
 
 <section id="trabajos" class="page">
+<div id="activeTripsWork"></div>
 <div class="card"><h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#2384ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="12" height="11" rx="2"/><path d="M14 9h4l4 4v4h-8"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg> Iniciar viaje</h2><p class="note">Registra la carga ahora. Completarás la descarga más tarde.</p><div class="grid">
 <div><label>Fecha de carga</label><input type="date" id="jobDate"></div><div><label>Cliente</label><input id="jobClient" placeholder="Cliente"></div>
 <div><label>Lugar de carga</label><input id="jobLoad" list="places" placeholder="Origen"></div><div><label>Destino previsto (opcional)</label><input id="jobUnload" list="places" placeholder="Destino"></div>
 <div><label>Km en carga</label><input id="jobKmStart" type="number" min="0" step="1" inputmode="numeric"></div><div><label>Kilos en carga</label><input id="jobWeightStart" type="number" min="0" step="0.01" inputmode="decimal"></div>
 </div><label>Observaciones</label><textarea id="jobNotes" placeholder="Mercancía, referencia..."></textarea><button class="primary" onclick="addJob()">Iniciar viaje</button></div>
-<div class="card"><h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#2384ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4m0 1c5-4 9 4 15 0v11c-6 4-10-4-15 0"/></svg> Finalizar viaje</h2><label>Selecciona un viaje en curso</label><select id="finishJob" onchange="showFinishJob()"></select><p id="finishInfo" class="note"></p><div class="grid">
+<div class="card" id="finishCard"><h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#2384ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4m0 1c5-4 9 4 15 0v11c-6 4-10-4-15 0"/></svg> Finalizar viaje</h2><label>Selecciona un viaje en curso</label><select id="finishJob" onchange="showFinishJob()"></select><p id="finishInfo" class="note"></p><div class="grid">
 <div><label>Fecha de descarga</label><input id="finishDate" type="date"></div><div><label>Lugar de descarga</label><input id="finishUnload" list="places"></div>
 <div><label>Km en descarga</label><input id="finishKm" type="number" min="0" step="1" inputmode="numeric"></div><div><label>Kilos en descarga</label><input id="finishWeight" type="number" min="0" step="0.01" inputmode="decimal"></div>
 </div><button class="primary" onclick="finishTrip()">Finalizar viaje</button></div>
@@ -255,6 +261,7 @@ header h1{color:#fff;font-family:"Sergy Trendi","SergyTrendi","Trebuchet MS",ui-
   </div>
 </div>
 
+<div id="tripSheet" class="trip-sheet" role="dialog" aria-modal="true" aria-label="Viaje en curso"><div class="trip-panel"><div class="trip-handle"></div><div class="toolbar" style="justify-content:flex-end"><button class="secondary" onclick="closeTripSheet()">Cerrar ×</button></div><div id="tripMenu" class="trip-menu"><h2>Viaje en curso</h2><button onclick="editActiveTrip()">✎　Modificar viaje</button><button onclick="tripDocuments(false)">▤　Documentos</button><button onclick="tripDocuments(true)">▣　Escanear albarán</button><button onclick="tripMap()">↗　Ruta en Maps</button><button onclick="finishActiveTrip()">⚑　Finalizar viaje</button></div><div id="tripEdit" hidden><h2>Modificar viaje</h2><div class="grid"><div><label>Fecha de carga</label><input id="editDate" type="date"></div><div><label>Cliente</label><input id="editClient"></div><div><label>Origen</label><input id="editLoad" list="places"></div><div><label>Destino previsto</label><input id="editUnload" list="places"></div><div><label>Km iniciales</label><input id="editKm" type="number" min="0" step="1"></div><div><label>Kilos en carga</label><input id="editWeight" type="number" min="0" step="0.01"></div></div><label>Observaciones / incidencias</label><textarea id="editNotes"></textarea><div class="toolbar"><button class="primary" onclick="saveActiveTrip()">Guardar cambios</button><button class="secondary" onclick="closeTripSheet()">Cancelar</button></div></div></div></div>
 <nav class="tabs" aria-label="Navegación principal">
   <button class="active" onclick="showPage('inicio',this)"><svg viewBox="0 0 24 24" fill="none" stroke="#1677f9" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Inicio</span></button>
   <button onclick="showPage('trabajos',this)"><svg viewBox="0 0 24 24" fill="none" stroke="#2384ff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="12" height="11" rx="2"/><path d="M14 9h4l4 4v4h-8M5 17v2m13-2v2"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg><span>Trabajos</span></button>
@@ -565,6 +572,21 @@ async function saveReportPDF(){
 <\/script>`;
 win.document.open();win.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cierre '+esc(ym)+'</title>'+styles+'<style>@media print{.report-actions{display:none!important}}</style></head><body>'+controls+content+'<p>Fin del informe</p>'+helper+'</body></html>');win.document.close();win.focus();}
 reportMonth.value=today().slice(0,7);paymentDate.value=today();renderArchive();
+</script>
+<script>
+let activeTripId=null;
+function tripById(){return db.jobs.find(j=>j.id===activeTripId&&!isFinished(j));}
+function tripCards(){const pending=db.jobs.filter(j=>!isFinished(j));const html=pending.length?'<h2 class="trip-heading">Viajes en curso</h2>'+pending.map((j,i)=>`<article class="card trip-card"><span class="trip-tag">● En curso</span> <span class="note">${esc(j.client||'')}</span><div class="trip-route"><div><small>ORIGEN</small><strong>${esc(j.load)}</strong><small>${esc(j.date)}</small></div><div><small>DESTINO</small><strong>${esc(j.unload||'Pendiente')}</strong></div></div><div class="trip-metrics"><div>Km iniciales<b>${n(j.kmStart)} km</b></div><div>Peso de carga<b>${n(j.weightStart,2)} kg</b></div></div><div class="trip-actions"><button class="trip-round" aria-label="Modificar viaje" onclick="openTrip(${i},true)">✎</button><button class="trip-round" aria-label="Documentos" onclick="openTrip(${i});tripDocuments(false)">▤</button><button class="trip-round" aria-label="Más opciones" onclick="openTrip(${i})">⋮</button><button class="trip-finish" onclick="openTrip(${i});finishActiveTrip()">⚑ Finalizar</button></div></article>`).join(''):'';document.getElementById('activeTripsHome').innerHTML=html;document.getElementById('activeTripsWork').innerHTML=html;}
+function openTrip(i,edit=false){const j=db.jobs.filter(j=>!isFinished(j))[i];if(!j)return;activeTripId=j.id;tripSheet.classList.add('open');tripMenu.hidden=false;tripEdit.hidden=true;if(edit)editActiveTrip();}
+function closeTripSheet(){tripSheet.classList.remove('open');}
+function editActiveTrip(){const j=tripById();if(!j)return;const vals={editDate:j.date,editClient:j.client,editLoad:j.load,editUnload:j.unload,editKm:j.kmStart,editWeight:j.weightStart,editNotes:j.notes};for(const [k,v] of Object.entries(vals))document.getElementById(k).value=v??'';tripMenu.hidden=true;tripEdit.hidden=false;}
+function saveActiveTrip(){const j=tripById();if(!j)return alert('El viaje ya no está en curso.');const km=editKm.value,weight=editWeight.value;if(!txt('editDate')||!txt('editLoad')||km===''||weight===''||!Number.isFinite(+km)||!Number.isFinite(+weight)||+km<0||+weight<0)return alert('Comprueba fecha, origen, kilómetros y kilos.');const previous=db.jobs.filter(x=>x.id!==j.id&&isFinished(x)&&Number.isFinite(Number(x.kmEnd))&&Number(x.kmEnd)<=+km).sort((a,b)=>Number(b.kmEnd)-Number(a.kmEnd))[0];const changed=Number(j.kmStart)!==+km;Object.assign(j,{date:txt('editDate'),client:txt('editClient'),load:txt('editLoad'),unload:txt('editUnload'),kmStart:+km,weightStart:+weight,notes:txt('editNotes')});if(changed){j.emptyKm=previous?Math.max(0,+km-Number(previous.kmEnd)):0;j.previousJobId=previous?.id||'';}[j.load,j.unload].forEach(p=>{if(p&&!db.places.includes(p))db.places.push(p)});save();closeTripSheet();}
+function goTripPage(name){const b=document.querySelector(`.tabs button[onclick*="'${name}'"]`);showPage(name,b);}
+function finishActiveTrip(){const j=tripById();if(!j)return;closeTripSheet();goTripPage('trabajos');finishJob.value=j.id;showFinishJob();document.getElementById('finishCard').scrollIntoView({block:'start'});}
+function tripDocuments(scan){const j=tripById();if(!j)return;closeTripSheet();goTripPage('archivo');renderArchive();docRecord.value=j.id;docType.value='Albarán';docRecord.scrollIntoView({block:'center'});if(scan)scanFiles.click();}
+function tripMap(){const j=tripById();if(!j||!j.unload)return alert('Introduce primero el destino previsto.');window.open('https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(j.load)+'&destination='+encodeURIComponent(j.unload),'_blank','noopener');}
+tripSheet.addEventListener('click',e=>{if(e.target===tripSheet)closeTripSheet()});
+const baseRender=render;render=function(){baseRender();tripCards();};tripCards();
 </script>
 </body>
 </html>
